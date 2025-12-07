@@ -1,0 +1,374 @@
+<!-- TEST HAYFA OK -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Darnest – Guesthouses Management Platform</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta name="description" content="Darnest is a modern guesthouses management platform that helps you manage bookings, rooms, customers, and multiple guesthouses easily in one place."/>
+    <meta name="keywords" content="guesthouse management, multiple guesthouses, booking system, room management, Tunisia, Darnest" />
+
+
+    <!-- Favicon -->
+    <link href="img/darnest_favicon_256.png" rel="icon" />
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Icon Font Stylesheet -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+
+    <!-- Libraries Stylesheet -->
+    <link href="lib/animate/animate.min.css" rel="stylesheet" />
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet" />
+    <link
+      href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Template Stylesheet -->
+    <link href="css/style.css" rel="stylesheet" />
+</head>
+
+  <body>
+    <div class="container-xxl bg-white p-0">
+      <!-- Spinner Start -->
+      <div
+        id="spinner"
+        class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center"
+      >
+        <div
+          class="spinner-border text-primary"
+          style="width: 3rem; height: 3rem"
+          role="status"
+        >
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+      <!-- Spinner End -->
+
+      <!-- Header Start -->
+      <div id="header">
+        
+      </div>
+      <!-- Header End -->
+
+      <!-- Page Header Start -->
+      <div
+        class="container-fluid page-header mb-5 p-0"
+        style="background-image: url(img/carousel-1.jpg)"
+      >
+        <div class="container-fluid page-header-inner py-5">
+          <div class="container text-center pb-5">
+            <h1 class="display-3 text-white mb-3 animated slideInDown">
+              Booking
+            </h1>
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb justify-content-center text-uppercase">
+                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                <li
+                  class="breadcrumb-item text-white active"
+                  aria-current="page"
+                >
+                  Booking
+                </li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+      </div>
+      <!-- Page Header End -->
+
+      <!-- Booking Start -->
+      <div class="container-xxl py-5">
+        <div class="container">
+          <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h6 class="section-title text-center text-primary text-uppercase">
+              Room Booking
+            </h6>
+            <h1 class="mb-5">
+              Book A
+              <span class="text-primary text-uppercase">Luxury Room</span>
+            </h1>
+          </div>
+          <div class="row g-5">
+            <div class="col-lg-6">
+              <div class="row g-3">
+                <div class="col-6 text-end">
+                  <img
+                    class="img-fluid rounded w-75 wow zoomIn"
+                    data-wow-delay="0.1s"
+                    src="img/about-1.jpg"
+                    style="margin-top: 25%"
+                  />
+                </div>
+                <div class="col-6 text-start">
+                  <img
+                    class="img-fluid rounded w-100 wow zoomIn"
+                    data-wow-delay="0.3s"
+                    src="img/about-2.jpg"
+                  />
+                </div>
+                <div class="col-6 text-end">
+                  <img
+                    class="img-fluid rounded w-50 wow zoomIn"
+                    data-wow-delay="0.5s"
+                    src="img/about-3.jpg"
+                  />
+                </div>
+                <div class="col-6 text-start">
+                  <img
+                    class="img-fluid rounded w-75 wow zoomIn"
+                    data-wow-delay="0.7s"
+                    src="img/about-4.jpg"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="wow fadeInUp" data-wow-delay="0.2s">
+                <div>
+                  <div class="row g-3">
+                    <!-- First Name -->
+                    <div class="col-md-6">
+                      <div class="form-floating">
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="bookingFirstname"
+                          placeholder="First Name"
+                          required
+                        />
+                        <label for="bookingFirstname">First Name</label>
+                        <span
+                          id="err-fnameBooking"
+                          class="text-danger small"
+                        ></span>
+                      </div>
+                    </div>
+
+                    <!-- Last Name -->
+                    <div class="col-md-6">
+                      <div class="form-floating">
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="bookingLastname"
+                          placeholder="Last Name"
+                          required
+                        />
+                        <label for="bookingLastname">Last Name</label>
+                        <span
+                          id="err-lnameBooking"
+                          class="text-danger small"
+                        ></span>
+                      </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="col-md-12">
+                      <div class="form-floating">
+                        <input
+                          type="email"
+                          class="form-control"
+                          id="bookingEmail"
+                          placeholder="Email"
+                          required
+                        />
+                        <label for="bookingEmail">Email</label>
+                        <span
+                          id="err-emailBooking"
+                          class="text-danger small"
+                        ></span>
+                      </div>
+                    </div>
+
+                    <!-- Check In -->
+                    <!-- TEST HAYFA 2025 -->
+                    <div class="col-md-6">
+                      <div
+                        class="form-floating date"
+                        id="bookingCheckinDate"
+                        data-target-input="nearest"
+                      >
+                        <input
+                          type="date"
+                          class="form-control"
+                          id="bookingCheckin"
+                          placeholder="Check In"
+                          data-target="#bookingCheckinDate"
+                          data-toggle="datetimepicker"
+                          required
+                        />
+                        <label for="bookingCheckin">Check In</label>
+                        <span
+                          id="err-checkinBooking"
+                          class="text-danger small"
+                        ></span>
+                      </div>
+                    </div>
+
+                    <!-- Check Out -->
+                    <div class="col-md-6">
+                      <div
+                        class="form-floating"
+                        id="bookingCheckoutDate"
+                        data-target-input="nearest"
+                      >
+                        <input
+                          type="date"
+                          class="form-control"
+                          id="bookingCheckout"
+                          placeholder="Check Out"
+                          data-target="#bookingCheckoutDate"
+                          data-toggle="datetimepicker"
+                          required
+                        />
+
+                        <label for="bookingCheckout">Check Out</label>
+                        <span
+                          id="err-checkoutBooking"
+                          class="text-danger small"
+                        ></span>
+                      </div>
+                    </div>
+
+                    <!-- Select Adult -->
+                    <div class="col-md-6">
+                      <div class="form-floating">
+                        <select class="form-select" id="bookingAdult" required>
+                          <option value="" selected disabled>
+                            Select Adult
+                          </option>
+                          <option value="1">1 Adult</option>
+                          <option value="2">2 Adults</option>
+                          <option value="3">3 Adults</option>
+                          <option value="4">4 Adults</option>
+                        </select>
+                        <label for="bookingAdult">Number of Adults</label>
+                        <span
+                          id="err-capacityBooking"
+                          class="text-danger small"
+                        ></span>
+                        <span id="err-adultBooking" class="text-danger small"></span>
+                      </div>
+                    </div>
+
+                    <!-- Select Child (optional) -->
+                    <div class="col-md-6">
+                      <div class="form-floating">
+                        <select class="form-select" id="bookingChild">
+                          <option value="" selected>No Children</option>
+                          <option value="1">1 Child</option>
+                          <option value="2">2 Children</option>
+                          <option value="3">3 Children</option>
+                        </select>
+                        <label for="bookingChild"
+                          >Number of Children (optional)</label
+                        >
+                      </div>
+                    </div>
+
+                    <!-- Submit -->
+                    <div class="col-12">
+                      <!-- Bouton corrigé -->
+                      <button
+                        class="btn btn-primary w-100 py-3"
+                        type="button"
+                        onclick="booking(event)"
+                      >
+                        Book Now
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Booking End -->
+
+      <!-- Footer Start -->
+      <div class="container-fluid bg-dark text-light footer wow fadeIn mt-5" data-wow-delay="0.1s">
+            <div class="container pb-5">
+                <div class="row g-5">
+                    <div class="col-md-6 col-lg-4">
+                        <div class="bg-primary rounded p-4">
+                            <a href="index.html"><h1 class="text-white text-uppercase mb-3">Darnest</h1></a>
+                            <p class="text-white mb-0">
+                                Your trusted platform for finding and booking the perfect guesthouse. Browse, book, and connect with ease!
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <h6 class="section-title text-start text-primary text-uppercase mb-4">Contact</h6>
+                        <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>123 Street, Tunis, Tunisia</p>
+                        <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+216 71 123 456</p>
+                        <p class="mb-2"><i class="fa fa-envelope me-3"></i>darnest@gmail.com</p>
+                        <div class="d-flex pt-2">
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-youtube"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-12">
+                        <div class="row gy-5 g-4">
+                            <div class="col-md-6">
+                                <h6 class="section-title text-start text-primary text-uppercase mb-4">Services</h6>
+                                <a class="btn btn-link" href="#">Guesthouse Booking</a>
+                                <a class="btn btn-link" href="#">Room Selection</a>
+                                <a class="btn btn-link" href="#">Secure Reservations</a>
+                                <a class="btn btn-link" href="#">24/7 Support</a>
+                                <a class="btn btn-link" href="#">Flexible<span>Cancellations</span></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+      </div>
+      <!-- Footer End -->
+
+      <!-- Back to Top -->
+      <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"
+        ><i class="bi bi-arrow-up"></i
+      ></a>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/wow/wow.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/counterup/counterup.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        generateHeader();
+      
+      })
+    </script>
+  </body>
+</html>

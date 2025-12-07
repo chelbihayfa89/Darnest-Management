@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Darnest – Guesthouses Management Platform</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta name="description" content="Darnest is a modern guesthouses management platform that helps you manage bookings, rooms, customers, and multiple guesthouses easily in one place."/>
+    <meta name="keywords" content="guesthouse management, multiple guesthouses, booking system, room management, Tunisia, Darnest" />
+
+
+    <!-- Favicon -->
+    <link href="img/darnest_favicon_256.png" rel="icon" />
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Icon Font Stylesheet -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+
+    <!-- Libraries Stylesheet -->
+    <link href="lib/animate/animate.min.css" rel="stylesheet" />
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet" />
+    <link
+      href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Template Stylesheet -->
+    <link href="css/style.css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div class="container-xxl bg-white p-0">
+      <!-- Spinner Start -->
+      <div
+        id="spinner"
+        class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center"
+      >
+        <div
+          class="spinner-border text-primary"
+          style="width: 3rem; height: 3rem"
+          role="status"
+        >
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+      <!-- Spinner End -->
+
+      <!-- Header Start -->
+      <div id="header"></div>
+      <!-- Header End -->
+
+      <!-- Page Header Start -->
+      <div
+        class="container-fluid page-header mb-5 p-0"
+        style="background-image: url(img/carousel-1.jpg)"
+      >
+        <div class="container-fluid page-header-inner py-5">
+          <div class="container text-center pb-5">
+            <h1 class="display-3 text-white mb-3 animated slideInDown">
+              Add Guesthouse
+            </h1>
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb justify-content-center text-uppercase">
+                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                <li
+                  class="breadcrumb-item text-white active"
+                  aria-current="page"
+                >
+                  Add Guesthouse
+                </li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+      </div>
+      <!-- Page Header End -->
+
+      <!-- Add Guesthouse Start -->
+      <div class="container-xxl py-5">
+        <div class="container">
+          <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h6 class="section-title text-center text-primary text-uppercase">
+              Guesthouse Details
+            </h6>
+            <h1 class="mb-5">
+              <span class="text-primary text-uppercase">Submit</span> Guesthouse
+              Details
+            </h1>
+          </div>
+          <div class="row g-4 justify-content-center mb-5">
+            <div class="col-md-6 d-flex">
+              <div class="wow fadeInUp" data-wow-delay="0.2s">
+                <div>
+                  <div class="row g-3">
+                    <!-- Name -->
+                    <div class="col-md-12">
+                      <div class="form-floating">
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="adminHouseName"
+                          placeholder="Guesthouse Name"
+                        />
+                        <label for="adminHouseName">Guesthouse Name</label>
+                        <span
+                          id="err-adminHouseName"
+                          class="text-danger small"
+                        ></span>
+                      </div>
+                    </div>
+                    <!-- Owner -->
+                     <!-- Select Owner -->
+                     <div class="col-md-12">
+                        <div class="form-floating">
+                          <select id="selectOwner" class="form-control">
+                            
+                          </select>
+                          <label for="selectOwner">Owner</label>
+                          <span id="err-selectOwner" class="text-danger small"></span>
+                        </div>
+                     </div>
+                    <!-- Phone -->
+                    <div class="col-md-12">
+                      <div class="form-floating">
+                        <input
+                          type="tel"
+                          class="form-control"
+                          id="adminHousePhone"
+                          placeholder="Phone"
+                        />
+                        <label for="adminHousePhone">Phone</label>
+                        <span
+                          id="err-adminHousePhone"
+                          class="text-danger small"
+                        ></span>
+                      </div>
+                    </div>
+
+                    <!-- City -->
+                    <div class="col-md-12">
+                      <div class="form-floating">
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="adminHouseCity"
+                          placeholder="City"
+                        />
+                        <label for="adminHouseCity">City</label>
+                        <span
+                          id="err-adminHouseCity"
+                          class="text-danger small"
+                        ></span>
+                      </div>
+                    </div>
+
+                    <!-- Location -->
+                    <div class="col-md-12">
+                      <div class="form-floating">
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="adminHouseLocation"
+                          placeholder="Location"
+                        />
+                        <label for="adminHouseLocation">Location</label>
+                        <span
+                          id="err-adminHouseLocation"
+                          class="text-danger small"
+                        ></span>
+                      </div>
+                    </div>
+
+                    <!-- Capacity -->
+                    <div class="col-md-12">
+                      <div class="form-floating">
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="adminHouseCapacity"
+                          placeholder="Confirm Password"
+                        />
+                        <label for="adminHouseCapacity">Capacity</label>
+                        <span
+                          id="err-adminHouseCapacity"
+                          class="text-danger small"
+                        ></span>
+                      </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="col-md-12">
+                      <div class="form-floating">
+                        <textarea
+                          name=""
+                          id="houseDescription"
+                          cols="100"
+                          style="height: 100px"
+                          class="form-control"
+                        ></textarea>
+                        <label for="adminHouseDescription">Description</label>
+                        <span
+                          id="err-adminHouseDescription"
+                          class="text-danger small"
+                        ></span>
+                      </div>
+                    </div>
+
+                    <!-- Image -->
+                    <div class="col-md-12">
+                      <div class="form-floating">
+                        <input
+                          type="file"
+                          class="form-control"
+                          id="adminImgHouseUpload"
+                          accept="image/*"
+                        />
+                        <label for="adminImgHouseUpload">Photo</label>
+                        <span
+                          id="err-adminImgHouseUpload"
+                          class="text-danger small"
+                        ></span>
+                        <img
+                          src=""
+                          alt="preview"
+                          id="preview"
+                          style="width: 200px; display: block; margin-top: 10px"
+                        />
+                      </div>
+                    </div>
+
+                    <!-- Submit -->
+                    <div class="col-md-12">
+                      <button
+                        class="btn btn-primary w-100 py-3"
+                        type="submit"
+                        id="addHouseByOwner-btn"
+                        onclick="addHouseByAdmin()">
+                        Add House
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Add Guesthouse End -->
+
+      <!-- Footer Start -->
+      <div class="container-fluid bg-dark text-light footer wow fadeIn mt-5" data-wow-delay="0.1s">
+            <div class="container pb-5">
+                <div class="row g-5">
+                    <div class="col-md-6 col-lg-4">
+                        <div class="bg-primary rounded p-4">
+                            <a href="index.html"><h1 class="text-white text-uppercase mb-3">Darnest</h1></a>
+                            <p class="text-white mb-0">
+                                Your trusted platform for finding and booking the perfect guesthouse. Browse, book, and connect with ease!
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <h6 class="section-title text-start text-primary text-uppercase mb-4">Contact</h6>
+                        <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>123 Street, Tunis, Tunisia</p>
+                        <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+216 71 123 456</p>
+                        <p class="mb-2"><i class="fa fa-envelope me-3"></i>darnest@gmail.com</p>
+                        <div class="d-flex pt-2">
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-youtube"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-12">
+                        <div class="row gy-5 g-4">
+                            <div class="col-md-6">
+                                <h6 class="section-title text-start text-primary text-uppercase mb-4">Services</h6>
+                                <a class="btn btn-link" href="#">Guesthouse Booking</a>
+                                <a class="btn btn-link" href="#">Room Selection</a>
+                                <a class="btn btn-link" href="#">Secure Reservations</a>
+                                <a class="btn btn-link" href="#">24/7 Support</a>
+                                <a class="btn btn-link" href="#">Flexible<span>Cancellations</span></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+      </div>
+      <!-- Footer End -->
+
+      <!-- Back to Top -->
+      <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"
+        ><i class="bi bi-arrow-up"></i
+      ></a>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/wow/wow.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/counterup/counterup.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="lib/tempusdominus/js/moment.min.js"></script>
+    <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
+    <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+          window.addEventListener("DOMContentLoaded", () => {
+            generateHeader();
+            showOwners();
+          });
+    </script>
+  </body>
+</html>
