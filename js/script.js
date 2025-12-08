@@ -428,6 +428,7 @@ function generateHeader() {
   } else {
     navLinks = `
       <a href="index.html" class="nav-item nav-link">Home</a>
+      <a href="about.html" class="nav-item nav-link">About</a>
       <a href="houses.html" class="nav-item nav-link">GuestHouses</a>
       <a href="search.html" class="nav-item nav-link">Search</a>
       <a href="contact.html" class="nav-item nav-link">Contact</a>`;
