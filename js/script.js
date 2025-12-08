@@ -1127,6 +1127,11 @@ function clientReservations() {
 }
 
 function deleteClientReservation(reservationId) {
+  let connectedUser = JSON.parse(localStorage.getItem("connectedUserId"));
+  if (!connectedUser) {
+    alert("You must be logged in to delete a reservation.");
+    return;
+  }
   let reservationsArr = getFromLS("reservations");
   let pos = reservationsArr.findIndex((res) => res.id == reservationId);
   if (pos == -1) {
