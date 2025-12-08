@@ -1405,6 +1405,7 @@ function addRoomByOwner() {
       document.getElementById("addRoomForm")?.reset();
       previewImg.src = "";
       alert("Room added successfully!");
+      location.replace("ownerDashboard.html");
     };
     reader.readAsDataURL(file);
   }
@@ -1499,11 +1500,6 @@ function editHouseByOwner(houseId) {
   if (!ownerId) {
     alert("Please log in first!");
     window.location.href = "login.html";
-    return;
-  }
-
-  if (!foundHouse || foundHouse.ownerId !== ownerId) {
-    alert("You cannot edit this house!");
     return;
   }
 
@@ -1697,11 +1693,15 @@ function validateEditHouseByOwner(houseId) {
         preview.src = reader.result;
         foundHouse.houseImg = reader.result;
         setToLS("houses", housesArr);
+        alert("House updated successfully");
+        location.replace("ownerDashboard.html");
       };
       reader.readAsDataURL(imgInput.files[0]);
     } else {
       foundHouse.houseImg = oldHouseImg;
       setToLS("houses", housesArr);
+      alert("House updated successfully");
+      location.replace("ownerDashboard.html");
     }
   }
 }
@@ -1772,7 +1772,7 @@ function displayRoomsByOwner() {
         <img src="${ownerRoomsArr[i].roomImg}" class="img-thumbnail" alt="${
         ownerRoomsArr[i].roomName
       }"
-        style="width: 150px; height: auto">
+        style="width: 150px; height: auto; object-fit: cover; border-radius: 10px;">
         </td>
         <td>${
           searchObjectByIdAndKey(ownerRoomsArr[i].houseId, "houses").houseName
@@ -2277,6 +2277,13 @@ function deleteReservationByOwner(resId) {
 // ======================================================
 
 function displayUsersByAdmin() {
+  const connectedUserId = localStorage.getItem("connectedUserId");
+  if (!connectedUserId) {
+    alert("Accès refusé !");
+    location.replace("login.html");
+    return;
+  }
+  
   let usersArr = getFromLS("users").filter(
     (u) => u.role === "owner" || u.role === "client"
   );
@@ -2846,6 +2853,11 @@ function updateRelatedRoomsAndReservationsByAdmin(houseId) {
 }
 
 function addHouseByAdmin() {
+  const connectedUserId = localStorage.getItem("connectedUserId");
+  if (!connectedUserId) {
+    alert("Action interdite !");
+    return;
+  }
   let housesArr = getFromLS("houses");
   // Inputs
   let adminHouseName = getInpValue("adminHouseName");
@@ -2990,7 +3002,7 @@ function displayRoomsByAdmin() {
       <td>${r.roomName}</td>
       <td><img src=${r.roomImg} class="img-thumbnail" alt=${
         r.roomName
-      } style="width: 150px; height: auto"></td>
+      } style="width: 150px; height: auto; object-fit: cover; border-radius: 10px;"></td>
       <td>${searchObjectByIdAndKey(r.houseId, "houses").houseName}</td>
       <td>${r.roomType}</td>
       <td>${r.numBeds}</td>
