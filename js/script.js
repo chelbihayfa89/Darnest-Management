@@ -31,7 +31,7 @@ function generateId(arr) {
 // Search object in LS by id + key
 function searchObjectByIdAndKey(id, key) {
   let T = getFromLS(key);
-  return T.find((e) => e.id == id);
+  return T.find((e) => e?.id == id);
 }
 
 //  Validate a field with optional regex
@@ -99,7 +99,7 @@ function signupClient() {
     "err-firstnameCl",
     nameRegex,
     "Please enter your first name",
-    "Only letters and spaces are allowed"
+    "Only letters and spaces are allowed",
   );
 
   const isLastnameValid = validateField(
@@ -107,7 +107,7 @@ function signupClient() {
     "err-lastnameCl",
     nameRegex,
     "Please enter your last name",
-    "Only letters and spaces are allowed"
+    "Only letters and spaces are allowed",
   );
 
   const isEmailValid = validateField(
@@ -115,7 +115,7 @@ function signupClient() {
     "err-emailCl",
     emailRegex,
     "Please enter your email",
-    "Invalid email format"
+    "Invalid email format",
   );
 
   const isPasswordValid = validateField(
@@ -123,14 +123,14 @@ function signupClient() {
     "err-passwordCl",
     passwordRegex,
     "Please enter a password",
-    "Password must be at least 6 chars, with letters and numbers"
+    "Password must be at least 6 chars, with letters and numbers",
   );
 
   const isConfirmPasswordValid = validateField(
     "confirmPasswordCl",
     "err-confirmPasswordCl",
     null,
-    "Please confirm your password"
+    "Please confirm your password",
   );
 
   const isPhoneValid = validateField(
@@ -138,7 +138,7 @@ function signupClient() {
     "err-phoneCl",
     phoneRegex,
     "Please enter your phone number",
-    "Phone must be 8-15 digits"
+    "Phone must be 8-15 digits",
   );
 
   const isAddressValid = validateField(
@@ -146,14 +146,17 @@ function signupClient() {
     "err-adrCl",
     addressRegex,
     "Please enter your address",
-    "Address contains invalid characters"
+    "Address contains invalid characters",
   );
 
   // Email uniqueness
-  if (!checkUnicity(emailCl)) {
-    document.getElementById("err-emailCl").textContent = "Email already in use";
-  } else {
-    document.getElementById("err-emailCl").textContent = "";
+  if (isEmailValid) {
+    if (!checkUnicity(emailCl)) {
+      document.getElementById("err-emailCl").textContent =
+        "Email already in use";
+    } else {
+      document.getElementById("err-emailCl").textContent = "";
+    }
   }
 
   // Password confirmation
@@ -219,7 +222,7 @@ function signupOwner() {
     "err-firstnameOw",
     nameRegex,
     "Please enter your first name",
-    "Only letters and spaces are allowed"
+    "Only letters and spaces are allowed",
   );
 
   const isLastnameValid = validateField(
@@ -227,7 +230,7 @@ function signupOwner() {
     "err-lastnameOw",
     nameRegex,
     "Please enter your last name",
-    "Only letters and spaces are allowed"
+    "Only letters and spaces are allowed",
   );
 
   const isEmailValid = validateField(
@@ -235,7 +238,7 @@ function signupOwner() {
     "err-emailOw",
     emailRegex,
     "Please enter your email",
-    "Invalid email format"
+    "Invalid email format",
   );
 
   const isPasswordValid = validateField(
@@ -243,14 +246,14 @@ function signupOwner() {
     "err-passwordOw",
     passwordRegex,
     "Please enter a password",
-    "Password must be at least 6 chars, with letters and numbers"
+    "Password must be at least 6 chars, with letters and numbers",
   );
 
   const isConfirmPasswordValid = validateField(
     "confirmPasswordOw",
     "err-confirmPasswordOw",
     null,
-    "Please confirm your password"
+    "Please confirm your password",
   );
 
   const isPhoneValid = validateField(
@@ -258,7 +261,7 @@ function signupOwner() {
     "err-phoneOw",
     phoneRegex,
     "Please enter your phone number",
-    "Phone must be 8-15 digits"
+    "Phone must be 8-15 digits",
   );
 
   const isAddressValid = validateField(
@@ -266,7 +269,7 @@ function signupOwner() {
     "err-adrOw",
     addressRegex,
     "Please enter your address",
-    "Address contains invalid characters"
+    "Address contains invalid characters",
   );
 
   // Email uniqueness
@@ -319,33 +322,31 @@ function login() {
   const enteredEmail = getInpValue("enteredEmail").trim();
   const enteredPassword = getInpValue("enteredPassword").trim();
 
-  // Reset error messages
-  document.getElementById("err-enteredEmail").textContent = "";
-  document.getElementById("err-enteredPassword").textContent = "";
-  document.getElementById("err-login").textContent = "";
-
   const usersArr = getFromLS("users");
 
   // Validation des champs
+  let hasError = false;
   if (!enteredEmail) {
     document.getElementById("err-enteredEmail").textContent =
       "Please enter your email";
-    return;
+    hasError = true;
   }
   if (!enteredPassword) {
     document.getElementById("err-enteredPassword").textContent =
       "Please enter your password";
-    return;
+    hasError = true;
   }
 
+  if (hasError) return;
   // Recherche de l'utilisateur
   const foundUser = usersArr.find(
-    (user) => user.email === enteredEmail && user.password === enteredPassword
+    (user) =>
+      user?.email === enteredEmail && user?.password === enteredPassword,
   );
 
   if (!foundUser) {
     document.getElementById("err-login").textContent = "Please check again!";
-    return; // Important pour ne pas continuer
+    return;
   }
 
   // Stockage de l'utilisateur connecté
@@ -484,12 +485,12 @@ function displayProfile() {
   }
   let user = searchObjectByIdAndKey(connectedUserId, "users");
   if (user) {
-    document.getElementById(
-      "username"
-    ).textContent = `${user.firstName.toUpperCase()} ${user.lastName.toUpperCase()}`;
-    document.getElementById("userAdr").textContent = `${user.address}`;
-    document.getElementById("userEmail").textContent = `${user.email}`;
-    document.getElementById("userPhone").textContent = `${user.phone}`;
+    const { firstName, lastName, address, email, phone } = user;
+    document.getElementById("username").textContent =
+      `${firstName.toUpperCase()} ${lastName.toUpperCase()}`;
+    document.getElementById("userAdr").textContent = address;
+    document.getElementById("userEmail").textContent = email;
+    document.getElementById("userPhone").textContent = phone;
   } else {
     console.log("No user found in LS");
   }
@@ -506,7 +507,12 @@ function editProfile() {
   }
   let user = searchObjectByIdAndKey(connectedUserId, "users");
   let content = "";
-  if (user) {
+  if (!user) {
+     document.getElementById("editProfileForm").innerHTML =
+      "<p class='text-danger'>User not found</p>";
+    return;
+  } else {
+    const { firstName, lastName, email, phone, address } = user;
     content = `<div class="container">
     <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
         <h6 class="section-title text-center text-primary text-uppercase">Edit Your Profile</h6>
@@ -521,7 +527,7 @@ function editProfile() {
                     <!-- Firstname -->
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="editFirstname" placeholder="First Name" value="${user.firstName}">
+                            <input type="text" class="form-control" id="editFirstname" placeholder="First Name" value="${firstName}">
                             <label for="editFirstname">First Name</label>
                             <span id="err-editFirstname" class="text-danger small"></span>
                         </div>
@@ -530,7 +536,7 @@ function editProfile() {
                     <!-- Lastname -->
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="editLastname" placeholder="Last Name" value="${user.lastName}">
+                            <input type="text" class="form-control" id="editLastname" placeholder="Last Name" value="${lastName}">
                             <label for="editLastname">Last Name</label>
                             <span id="err-editLastname" class="text-danger small"></span>
                         </div>
@@ -539,7 +545,7 @@ function editProfile() {
                     <!-- Email -->
                     <div class="col-md-12">
                         <div class="form-floating">
-                            <input type="email" class="form-control" id="editEmail" placeholder="Email" value="${user.email}">
+                            <input type="email" class="form-control" id="editEmail" placeholder="Email" value="${email}">
                             <label for="editEmail">Email</label>
                             <span id="err-editEmail" class="text-danger small"></span>
                         </div>
@@ -548,7 +554,7 @@ function editProfile() {
                     <!-- Phone -->
                     <div class="col-12">
                         <div class="form-floating">
-                            <input type="tel" class="form-control" id="editPhone" placeholder="Phone Number" value="${user.phone}">
+                            <input type="tel" class="form-control" id="editPhone" placeholder="Phone Number" value="${phone}">
                             <label for="editPhone">Phone Number</label>
                             <span id="err-editPhone" class="text-danger small"></span>
                         </div>
@@ -557,7 +563,7 @@ function editProfile() {
                     <!-- Address -->
                     <div class="col-12">
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="editAddress" placeholder="Address" value="${user.address}">
+                            <input type="text" class="form-control" id="editAddress" placeholder="Address" value="${address}">
                             <label for="editAddress">Address</label>
                             <span id="err-editAddress" class="text-danger small"></span>
                         </div>
@@ -596,8 +602,6 @@ function editProfile() {
     </div>
 </div>
 `;
-  } else {
-    console.log("no user found in LS");
   }
   document.getElementById("editProfileForm").innerHTML = content;
 }
@@ -605,7 +609,7 @@ function editProfile() {
 function validateEditProfile() {
   let connectedUserId = Number(localStorage.getItem("connectedUserId"));
   let usersArr = getFromLS("users");
-  let user = usersArr.find((u) => u.id == connectedUserId);
+  let user = usersArr.find((u) => u?.id === connectedUserId);
 
   // --- Regex Patterns ---
   const nameRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ\s-]+$/;
@@ -628,7 +632,7 @@ function validateEditProfile() {
     "err-editFirstname",
     nameRegex,
     "Please enter your first name",
-    "Only letters and spaces are allowed"
+    "Only letters and spaces are allowed",
   );
 
   const isLastnameValid = validateField(
@@ -636,7 +640,7 @@ function validateEditProfile() {
     "err-editLastname",
     nameRegex,
     "Please enter your last name",
-    "Only letters and spaces are allowed"
+    "Only letters and spaces are allowed",
   );
 
   const isEmailValid = validateField(
@@ -644,7 +648,7 @@ function validateEditProfile() {
     "err-editEmail",
     emailRegex,
     "Please enter your email",
-    "Invalid email format"
+    "Invalid email format",
   );
 
   let isPasswordValidFinal = true;
@@ -656,13 +660,13 @@ function validateEditProfile() {
       "err-editPassword",
       passwordRegex,
       "Please enter a password",
-      "Password must be at least 6 chars, with letters and numbers"
+      "Password must be at least 6 chars, with letters and numbers",
     );
     isConfirmPasswordValidFinal = validateField(
       "editConfirmPassword",
       "err-editConfirmPassword",
       null,
-      "Please confirm your password"
+      "Please confirm your password",
     );
     // Password confirmation
     if (password !== confirmPassword) {
@@ -682,7 +686,7 @@ function validateEditProfile() {
     "err-editPhone",
     phoneRegex,
     "Please enter your phone number",
-    "Phone must be 8-15 digits"
+    "Phone must be 8-15 digits",
   );
 
   const isAddressValid = validateField(
@@ -690,12 +694,12 @@ function validateEditProfile() {
     "err-editAddress",
     addressRegex,
     "Please enter your address",
-    "Address contains invalid characters"
+    "Address contains invalid characters",
   );
 
   // Email uniqueness
   const isEmailUnique = !usersArr.some(
-    (u) => u && u.email == email && u.id !== user.id
+    (u) => u && u.email == email && u.id !== user.id,
   );
   if (!isEmailUnique) {
     document.getElementById("err-editEmail").textContent =
@@ -739,19 +743,20 @@ function roomsCount(houseId) {
   let roomsArr = getFromLS("rooms");
   return roomsArr.reduce(
     (acc, room) => (room.houseId == houseId ? acc + 1 : acc),
-    0
+    0,
   );
 }
 
 function displayHouses() {
   let housesArr = getFromLS("houses");
   let content = "";
-  for (let i = 0; i < housesArr.length; i++) {
+  housesArr.forEach((house) => {
+    const { id, houseName, houseImg, houseCapacity, houseCity, housePhone, houseLocation, houseDescription } = house;
     content += `
     <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
               <div class="room-item shadow rounded overflow-hidden">
                 <div class="position-relative">
-                  <img class="img-fluid" src="${housesArr[i].houseImg}" alt="${housesArr[i].houseName}" 
+                  <img class="img-fluid" src="${houseImg}" alt="${houseName}" 
                   style="max-height: 300px; object-fit: cover; width: 100%;"/>
                   <small
                     class="position-absolute start-0 top-100 translate-middle-y bg-primary text-white rounded py-1 px-3 ms-4"
@@ -760,81 +765,87 @@ function displayHouses() {
                 </div>
                 <div class="p-4 mt-2">
                   <div class="mb-3">
-                    <h5 class="mb-0">${housesArr[i].houseName}</h5>
+                    <h5 class="mb-0">${houseName}</h5>
                   </div>
                   <div class="mb-3">
                     <small class="border-end me-3 pe-3"
                       ><i class="fa fa-home text-primary me-2"></i>Rooms</small
                     >
                     <small class="border-end me-3 pe-3"
-                      ><i class="fa fa-users text-primary me-2"></i>${housesArr[i].houseCapacity} Guests</small
+                      ><i class="fa fa-users text-primary me-2"></i>${houseCapacity} Guests</small
                     >
                   </div>
                    <div class="mb-3">
                     <small class="border-end me-3 pe-3"
-                      ><i class="fa fa-map-marker text-primary me-2"></i>${housesArr[i].houseCity}</small
+                      ><i class="fa fa-map-marker text-primary me-2"></i>${houseCity}</small
                     >
                     <small class="border-end me-3 pe-3"
-                      ><i class="fa fa-phone text-primary me-2"></i>${housesArr[i].housePhone}</small
+                      ><i class="fa fa-phone text-primary me-2"></i>${housePhone}</small
                     >
                   </div>
                    <div class="mb-3">
-                      <i class="fa fa-road text-primary me-2"></i>${housesArr[i].houseLocation}
+                      <i class="fa fa-road text-primary me-2"></i>${houseLocation}
                   </div>
                   <p class="text-body mb-3">
-                  ${housesArr[i].houseDescription}
+                  ${houseDescription}
                   </p>
                   <div class="d-flex justify-content-center">
-                    <a class="btn btn-sm btn-primary rounded py-2 px-4" href="#" onclick= "goToDisplayRooms(${housesArr[i].id})"
+                    <a class="btn btn-sm btn-primary rounded py-2 px-4" href="#" onclick= "goToDisplayRooms(${id})"
                       >View Rooms</a
                     >
                   </div>
                 </div>
               </div>
             </div>`;
-  }
+  });
   document.getElementById("displayedHouses").innerHTML = content;
+}
+
+function goToDisplayRooms(houseId) {
+  localStorage.setItem("displayedHouseId", houseId);
+  location.replace("rooms.html");
 }
 
 function displayRoomsForSelectedHouse() {
   let displayedHouseId = localStorage.getItem("displayedHouseId");
   let roomsArr = getFromLS("rooms");
   let roomsForThisHouseArr = roomsArr.filter(
-    (r) => r.houseId == displayedHouseId
+    (r) => r.houseId === displayedHouseId,
   );
 
   let content = "";
 
-  if (roomsForThisHouseArr.length == 0) {
+  if (roomsForThisHouseArr.length === 0) {
     content = `
       <div class="text-center text-muted py-5">
         <p>No rooms available for this guesthouse yet.</p>
       </div>`;
   } else {
     roomsForThisHouseArr.forEach((room) => {
+      const {roomImg, roomPrice, roomName, roomType, roomCapacity, id} = room;
       content += `
         <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
           <div class="room-item shadow rounded overflow-hidden">
             <div class="position-relative">
-              <img class="img-fluid" src="${room.roomImg}" 
+              <img class="img-fluid" src="${roomImg}" 
                 style="max-height: 300px; object-fit: cover; width: 100%;" />
               <small
                 class="position-absolute start-0 top-100 translate-middle-y bg-primary text-white rounded py-1 px-3 ms-4"
               >
-                ${room.roomPrice} TND/Person
+                ${roomPrice} TND/Person
               </small>
             </div>
 
             <div class="p-4 mt-2">
               <div class="mb-3">
-                <h5 class="mb-0">${room.roomName}</h5>
-                <small class="text-muted">${room.roomType}</small>
+                <h5 class="mb-0">${roomName}</h5>
+                <small class="text-muted">${roomType}</small>
               </div>
 
               <div class="mb-3">
                 <small>
                   <i class="fa fa-users text-primary me-2"></i>
-                  ${room.roomCapacity} Guests
+                  ${roomCapacity} Guests
                 </small>
               </div>
 
@@ -842,7 +853,7 @@ function displayRoomsForSelectedHouse() {
                 <a
                   class="btn btn-sm btn-primary rounded py-2 px-4"
                   href="#"
-                  onclick="goToDisplayRoomDetails(${room.id})"
+                  onclick="goToDisplayRoomDetails(${id})"
                 >
                   View Details
                 </a>
@@ -864,11 +875,11 @@ function goToDisplayRoomDetails(roomId) {
 function displaySelectedRoomDetails() {
   let selectedRoomId = localStorage.getItem("selectedRoomId");
   let roomsArr = getFromLS("rooms");
-  let selectedRoom = roomsArr.find((r) => r.id == selectedRoomId);
+  let selectedRoom = roomsArr.find((r) => r?.id == selectedRoomId);
 
   const serviceIcons = {
     Wifi: '<i class="fa fa-wifi text-primary me-2"></i>',
-    AC: '<i class="fa fa-snowflake-o text-primary me-2"></i>',
+    AC: '<i class="fa fa-snowflake text-primary me-2"></i>',
     TV: '<i class="fa fa-tv text-primary me-2"></i>',
     "Room Services": '<i class="fa fa-bell text-primary me-2"></i>',
     Kitchenette: '<i class="fa fa-utensils  text-primary me-2"></i>',
@@ -882,38 +893,39 @@ function displaySelectedRoomDetails() {
       <p>Room not found.</p>
     </div>`;
   } else {
-    let rServices = `${selectedRoom.roomServices
+    const {id, numBeds, roomCapacity, roomDescription, roomImg, roomName, roomPrice, roomServices, roomType} = selectedRoom;
+    let rServices = `${roomServices
       .map(
         (s) =>
           `<span class="d-inline-block me-3 mb-2">${
             serviceIcons[s] || ""
-          }${s}<span/>`
+          }${s}<span/>`,
       )
       .join("")}`;
     content = `<div class="container-xxl py-5 px-0 wow zoomIn" data-wow-delay="0.1s">
             <div class="row g-0">
                 <div class="col-md-6 bg-dark d-flex align-items-center">
                     <div class="p-5">
-                        <h6 class="section-title text-start text-white text-uppercase mb-3">${selectedRoom.roomType}</h6>
-                        <h1 class="text-white mb-4">${selectedRoom.roomName}</h1>
-                        <p class="text-white mb-4">${selectedRoom.roomDescription}</p>
-                        <h4 class="text-warning mb-4">${selectedRoom.roomPrice} TND / Person</h4>
+                        <h6 class="section-title text-start text-white text-uppercase mb-3">${roomType}</h6>
+                        <h1 class="text-white mb-4">${roomName}</h1>
+                        <p class="text-white mb-4">${roomDescription}</p>
+                        <h4 class="text-warning mb-4">${roomPrice} TND / Person</h4>
                         
                         <div class="text-white mb-3 d-flex">
                            <small class="me-3">
                            <i class="fa fa-users text-primary me-2"></i>
-                           ${selectedRoom.roomCapacity} Guests
+                           ${roomCapacity} Guests
                            </small>
                            <i class="fa fa-bed text-primary me-2"></i>
-                           ${selectedRoom.numBeds} Beds
+                           ${numBeds} Beds
                         </div>
                         
                         <p>${rServices}</p>
-                        <button type="button" class="btn btn-light py-md-3 px-md-5" onclick="goToDisplayBooking(${selectedRoom.id})">Book A Room</button>
+                        <button type="button" class="btn btn-light py-md-3 px-md-5" onclick="goToDisplayBooking(${id})">Book A Room</button>
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <img src="${selectedRoom.roomImg}" alt="${selectedRoom.roomName}" style="object-fit: cover; width: 100%; height: 100%"/>
+                    <img src="${roomImg}" alt="${roomName}" style="object-fit: cover; width: 100%; height: 100%"/>
                 </div>
             </div>
         </div>`;
@@ -994,7 +1006,7 @@ function booking(event) {
     "err-fnameBooking",
     nameRegex,
     "Please enter your first name",
-    "Only letters and spaces are allowed"
+    "Only letters and spaces are allowed",
   );
 
   let isLastnameValid = validateField(
@@ -1002,7 +1014,7 @@ function booking(event) {
     "err-lnameBooking",
     nameRegex,
     "Please enter your last name",
-    "Only letters and spaces are allowed"
+    "Only letters and spaces are allowed",
   );
 
   let isEmailValid = validateField(
@@ -1010,7 +1022,7 @@ function booking(event) {
     "err-emailBooking",
     emailRegex,
     "Please enter your email",
-    "Invalid email format"
+    "Invalid email format",
   );
 
   if (isEmailValid && user.email !== email) {
@@ -1021,7 +1033,7 @@ function booking(event) {
   let isAdultSelected = validateSelect(
     "bookingAdult",
     "err-adultBooking",
-    "Please select adult."
+    "Please select adult.",
   );
 
   let isDateValid = true;
@@ -1083,13 +1095,16 @@ function booking(event) {
 
 function clientReservations() {
   let connectedUserId = localStorage.getItem("connectedUserId");
+
   let usersArr = getFromLS("users");
   let reservationsArr = getFromLS("reservations");
+
   let user = usersArr.find((u) => u.id == connectedUserId);
+  let {firstName, lastName} = user;
 
   let content = "";
   let clientReservations = reservationsArr.filter(
-    (res) => res.clientId == connectedUserId
+    (res) => res.clientId == connectedUserId,
   );
   if (clientReservations && clientReservations.length == 0) {
     content = `
@@ -1099,22 +1114,24 @@ function clientReservations() {
   } else {
     clientReservations.forEach((res) => {
       let room = searchObjectByIdAndKey(res.roomId, "rooms");
+      let {roomName, roomPrice} = room;
+      let {roomId, numGuests, checkinBooking, checkoutBooking,totalPrice,id} = res;
       let house = searchObjectByIdAndKey(
-        searchObjectByIdAndKey(res.roomId, "rooms").houseId,
-        "houses"
+        searchObjectByIdAndKey(roomId, "rooms").houseId,
+        "houses",
       );
+      let {houseName} = house;
       content += `
       <tr>
-        <td>${room.roomName}}</td>
-        <td>${house.houseName}</td>
-        <td>${room.roomPrice} DT</td>
-        <td>${user.firstName} ${user.lastName}</td>
-        <td>${res.numGuests}</td>
-        <td>${new Date(res.checkinBooking).toLocaleDateString("fr-FR")}</td>
-        <td>${new Date(res.checkoutBooking).toLocaleDateString("fr-FR")}</td>
-        <td>${res.totalPrice} DT</td>
-        <td><button type="button" class="btn btn-danger btn-sm" onclick="deleteClientReservation(${
-          res.id
+        <td>${roomName}}</td>
+        <td>${houseName}</td>
+        <td>${roomPrice} DT</td>
+        <td>${firstName} ${lastName}</td>
+        <td>${numGuests}</td>
+        <td>${new Date(checkinBooking).toLocaleDateString("fr-FR")}</td>
+        <td>${new Date(checkoutBooking).toLocaleDateString("fr-FR")}</td>
+        <td>${totalPrice} DT</td>
+        <td><button type="button" class="btn btn-danger btn-sm" onclick="deleteClientReservation(${id
         })">
                 <i class="fa fa-trash text-center text-light" title="Delete Reservation"></i>
             </button>
@@ -1135,7 +1152,7 @@ function deleteClientReservation(reservationId) {
   let reservationsArr = getFromLS("reservations");
   let pos = reservationsArr.findIndex((res) => res.id == reservationId);
   if (pos == -1) {
-    console.log("No reservation found with thid Id");
+    alert("No reservation found with thid Id");
   } else {
     reservationsArr.splice(pos, 1);
     setToLS("reservations", reservationsArr);
@@ -1176,7 +1193,7 @@ function addHouseByOwner() {
     window.location.href = "login.html";
     return;
   }
-  
+
   if (!file) {
     errMsg.textContent = "Please upload an image of the guesthouse";
     previewImg.src = "";
@@ -1191,42 +1208,42 @@ function addHouseByOwner() {
     "err-houseName",
     houseNameRegex,
     "Please enter house name",
-    "Only letters and spaces are allowed"
+    "Only letters and spaces are allowed",
   );
   const isHousePhoneValid = validateField(
     "housePhone",
     "err-housePhone",
     housePhoneRegex,
     "Please enter house phone number",
-    "Phone must be 8–15 digits"
+    "Phone must be 8–15 digits",
   );
   const isHouseCityValid = validateField(
     "houseCity",
     "err-houseCity",
     houseCityRegex,
     "Please enter city",
-    "City must be 2–30 characters long"
+    "City must be 2–30 characters long",
   );
   const isHouseLocationValid = validateField(
     "houseLocation",
     "err-houseLocation",
     houseLocationRegex,
     "Please enter location",
-    "Location must be 3–100 characters long"
+    "Location must be 3–100 characters long",
   );
   const isHouseDescValid = validateField(
     "houseDescription",
     "err-houseDescription",
     houseDescriptionRegex,
     "Please enter description",
-    "Description must be 10–100 characters long"
+    "Description must be 10–100 characters long",
   );
   const isHouseCapacityValid = validateField(
     "houseCapacity",
     "err-houseCapacity",
     houseCapacityRegex,
     "Please enter capacity",
-    "Capacity must be between 1 and 100 guests."
+    "Capacity must be between 1 and 100 guests.",
   );
 
   if (
@@ -1299,14 +1316,13 @@ function addRoomByOwner() {
 
   // Services (checkbox)
   const checkboxes = document.querySelectorAll('input[name="options"]:checked');
-  let services = [];
-  checkboxes.forEach((cb) => services.push(cb.value));
+  let services = Array.from(checkboxes).map( v => v.value);
 
   if (!ownerId) {
-  alert("Please log in first!");
-  window.location.href = "login.html";
-  return;
-}
+    alert("Please log in first!");
+    window.location.href = "login.html";
+    return;
+  }
 
   // --- Validation de l'image ---
   if (!file) {
@@ -1332,40 +1348,40 @@ function addRoomByOwner() {
     "err-roomName",
     roomNameRegex,
     "Please enter room name",
-    "Only letters and spaces are allowed"
+    "Only letters and spaces are allowed",
   );
   const isRoomPriceValid = validateField(
     "roomPrice",
     "err-roomPrice",
     roomPriceRegex,
     "Please enter price",
-    "The room price must be between 100 and 1000 TND."
+    "The room price must be between 100 and 1000 TND.",
   );
   const isRoomDescValid = validateField(
     "roomDescription",
     "err-roomDescription",
     roomDescriptionRegex,
     "Please enter description",
-    "Description must be 10–200 characters long"
+    "Description must be 10–200 characters long",
   );
   const isRoomCapacityValid = validateField(
     "roomCapacity",
     "err-roomCapacity",
     roomCapacityRegex,
     "Please enter capacity",
-    "The room capacity must be between 1 and 5"
+    "The room capacity must be between 1 and 5",
   );
   const isNumBedsValid = validateField(
     "numBeds",
     "err-numBeds",
     numBedsRegex,
     "Please enter number of beds",
-    "Please enter a number between 1 and 5."
+    "Please enter a number between 1 and 5.",
   );
   const isRoomTypeValid = validateSelect(
     "roomType",
     "err-roomType",
-    "Please select room type"
+    "Please select room type",
   );
 
   // --- Si tout est valide, créer la chambre ---
@@ -1411,11 +1427,6 @@ function addRoomByOwner() {
   }
 }
 
-function goToDisplayRooms(houseId) {
-  localStorage.setItem("displayedHouseId", houseId);
-  location.replace("rooms.html");
-}
-
 function displayHousesByOwner() {
   let ownerId = localStorage.getItem("connectedUserId");
   let housesArr = getFromLS("houses");
@@ -1434,31 +1445,32 @@ function displayHousesByOwner() {
     `;
   } else {
     ownerHousesArr.forEach((house) => {
+      let {houseName, houseImg, housePhone, houseCity, id} = house;
       content += `
         <tr>
-          <td>${house.houseName}</td>
+          <td>${houseName}</td>
           <td>
-            <img src="${house.houseImg}" class="img-thumbnail" alt="${
-        house.houseName
-      }"
+            <img src="${houseImg}" class="img-thumbnail" alt="${
+              houseName
+            }"
             style="width: 150px; height: auto; object-fit: cover; border-radius: 10px;">
           </td>
-          <td>${house.housePhone}</td>
-          <td>${house.houseCity}</td>
-          <td>${roomsCount(house.id)}</td>
+          <td>${housePhone}</td>
+          <td>${houseCity}</td>
+          <td>${roomsCount(id)}</td>
           <td class="d-flex">
             <button type="button" class="btn btn-success btn-sm me-2" onclick="goToAddRoom(${
-              house.id
+              id
             })">
               <i class="fa fa-plus text-center text-light" title="Add Room"></i>
             </button>
             <button type="button" class="btn btn-primary btn-sm me-2" onclick="editHouseByOwner(${
-              house.id
+              id
             })">
               <i class="fa fa-edit text-center text-light" title="Edit House"></i>
             </button>
             <button type="button" class="btn btn-danger btn-sm" onclick="deleteHouseByOwner(${
-              house.id
+              id
             })">
               <i class="fa fa-trash text-center text-light" title="Delete House"></i>
             </button>
@@ -1504,6 +1516,7 @@ function editHouseByOwner(houseId) {
   }
 
   if (foundHouse) {
+    const {houseName, housePhone, houseCity, houseLocation, houseDescription, houseCapacity, houseImg, id} = foundHouse;
     content = `<div class="container-xxl bg-white p-0">
 
       <!-- Edit Guesthouse Start -->
@@ -1521,7 +1534,7 @@ function editHouseByOwner(houseId) {
                      <!-- Name -->
 <div class="col-md-12">
   <div class="form-floating">
-    <input type="text" class="form-control" id="editHouseNameO" placeholder="Guesthouse Name" value="${foundHouse.houseName}"/>
+    <input type="text" class="form-control" id="editHouseNameO" placeholder="Guesthouse Name" value="${houseName}"/>
     <label for="editHouseNameO">Guesthouse Name</label>
     <span id="err-editHouseNameO" class="text-danger small"></span>
   </div>
@@ -1530,7 +1543,7 @@ function editHouseByOwner(houseId) {
 <!-- Phone -->
 <div class="col-md-12">
   <div class="form-floating">
-    <input type="tel" class="form-control" id="editHousePhoneO" placeholder="Phone" value="${foundHouse.housePhone}"/>
+    <input type="tel" class="form-control" id="editHousePhoneO" placeholder="Phone" value="${housePhone}"/>
     <label for="editHousePhoneO">Phone</label>
     <span id="err-editHousePhoneO" class="text-danger small"></span>
   </div>
@@ -1539,7 +1552,7 @@ function editHouseByOwner(houseId) {
 <!-- City -->
 <div class="col-md-12">
   <div class="form-floating">
-    <input type="text" class="form-control" id="editHouseCityO" placeholder="City" value="${foundHouse.houseCity}" />
+    <input type="text" class="form-control" id="editHouseCityO" placeholder="City" value="${houseCity}" />
     <label for="editHouseCityO">City</label>
     <span id="err-editHouseCityO" class="text-danger small"></span>
   </div>
@@ -1548,7 +1561,7 @@ function editHouseByOwner(houseId) {
 <!-- Location -->
 <div class="col-md-12">
   <div class="form-floating">
-    <input type="text" class="form-control" id="editHouseLocationO" placeholder="Location" value="${foundHouse.houseLocation}"/>
+    <input type="text" class="form-control" id="editHouseLocationO" placeholder="Location" value="${houseLocation}"/>
     <label for="editHouseLocationO">Location</label>
     <span id="err-editHouseLocationO" class="text-danger small"></span>
   </div>
@@ -1557,7 +1570,7 @@ function editHouseByOwner(houseId) {
 <!-- Capacity -->
 <div class="col-md-12">
   <div class="form-floating">
-    <input type="number" class="form-control" id="editHouseCapacityO" placeholder="Capacity" value="${foundHouse.houseCapacity}"/>
+    <input type="number" class="form-control" id="editHouseCapacityO" placeholder="Capacity" value="${houseCapacity}"/>
     <label for="editHouseCapacityO">Capacity</label>
     <span id="err-editHouseCapacityO" class="text-danger small"></span>
   </div>
@@ -1566,7 +1579,7 @@ function editHouseByOwner(houseId) {
 <!-- Description -->
 <div class="col-md-12">
   <div class="form-floating">
-    <textarea id="editHouseDescriptionO" class="form-control" style="height: 100px">${foundHouse.houseDescription}</textarea>
+    <textarea id="editHouseDescriptionO" class="form-control" style="height: 100px">${houseDescription}</textarea>
     <label for="editHouseDescriptionO">Description</label>
     <span id="err-editHouseDescriptionO" class="text-danger small"></span>
   </div>
@@ -1577,14 +1590,14 @@ function editHouseByOwner(houseId) {
   <div class="form-floating">
     <input type="file" class="form-control" id="editImgHouseUploadO" accept="image/*" />
     <label for="editImgHouseUploadO">Change Photo</label>
-    <img src="${foundHouse.houseImg}" alt="preview" id="editPreviewO" style="width:200px; display:block; margin-top:10px" />
+    <img src="${houseImg}" alt="preview" id="editPreviewO" style="width:200px; display:block; margin-top:10px" />
     <span id="err-editImgHouseUploadO" class="text-danger small"></span>
   </div>
 </div>
 
 <!-- Submit -->
 <div class="col-md-12">
-  <button class="btn btn-primary w-100 py-3" type="button" id="editHouseByOwnerBtnO" onclick="validateEditHouseByOwner(${foundHouse.id})">
+  <button class="btn btn-primary w-100 py-3" type="button" id="editHouseByOwnerBtnO" onclick="validateEditHouseByOwner(${id})">
     Save Changes
   </button>
 </div>
@@ -1598,6 +1611,7 @@ function editHouseByOwner(houseId) {
   }
   document.getElementById("editHouseByOwner").innerHTML = content;
 }
+
 
 function validateEditHouseByOwner(houseId) {
   let housesArr = getFromLS("houses");
@@ -1630,7 +1644,7 @@ function validateEditHouseByOwner(houseId) {
     "err-editHouseNameO",
     houseNameRegex,
     "Please enter the guesthouse name",
-    "Only letters and spaces are allowed (3–50 chars)"
+    "Only letters and spaces are allowed (3–50 chars)",
   );
 
   const isPhoneValid = validateField(
@@ -1638,7 +1652,7 @@ function validateEditHouseByOwner(houseId) {
     "err-editHousePhoneO",
     housePhoneRegex,
     "Please enter a phone number",
-    "Phone number must contain exactly 8 digits"
+    "Phone number must contain exactly 8 digits",
   );
 
   const isCityValid = validateField(
@@ -1646,7 +1660,7 @@ function validateEditHouseByOwner(houseId) {
     "err-editHouseCityO",
     houseCityRegex,
     "Please enter the city name",
-    "Invalid city name (letters only)"
+    "Invalid city name (letters only)",
   );
 
   const isLocationValid = validateField(
@@ -1654,7 +1668,7 @@ function validateEditHouseByOwner(houseId) {
     "err-editHouseLocationO",
     houseLocationRegex,
     "Please enter the location",
-    "Location must be between 3 and 100 characters"
+    "Location must be between 3 and 100 characters",
   );
 
   const isCapacityValid = validateField(
@@ -1662,7 +1676,7 @@ function validateEditHouseByOwner(houseId) {
     "err-editHouseCapacityO",
     houseCapacityRegex,
     "Please enter capacity",
-    "Capacity must be a number greater than 0"
+    "Capacity must be a number greater than 0",
   );
 
   const isDescriptionValid = validateField(
@@ -1670,7 +1684,7 @@ function validateEditHouseByOwner(houseId) {
     "err-editHouseDescriptionO",
     houseDescriptionRegex,
     "Please enter a description",
-    "Description must be between 10 and 200 characters"
+    "Description must be between 10 and 200 characters",
   );
   if (
     isNameValid &&
@@ -1731,11 +1745,12 @@ function updateRelatedRoomsAndReservations(houseId) {
   let roomsArr = getFromLS("rooms");
   let reservationsArr = getFromLS("reservations");
 
-  let relatedRooms = roomsArr.filter((r) => r.houseId === houseId);
-  let relatedRoomsIds = relatedRooms.map((r) => r.id);
+  let relatedRoomsIds = roomsArr
+  .filter((r) => r.houseId === houseId)
+  .map((r) => r.id);
 
   reservationsArr = reservationsArr.filter(
-    (res) => !relatedRoomsIds.includes(res.roomId)
+    (res) => !relatedRoomsIds.includes(res.roomId),
   );
   roomsArr = roomsArr.filter((r) => r.houseId !== houseId);
   setToLS("rooms", roomsArr);
@@ -1763,41 +1778,7 @@ function displayRoomsByOwner() {
       }
     }
   }
-  if (ownerRoomsArr.length > 0) {
-    for (let i = 0; i < ownerRoomsArr.length; i++) {
-      content += `
-    <tr>
-        <td>${ownerRoomsArr[i].roomName}</td>
-        <td>
-        <img src="${ownerRoomsArr[i].roomImg}" class="img-thumbnail" alt="${
-        ownerRoomsArr[i].roomName
-      }"
-        style="width: 150px; height: auto; object-fit: cover; border-radius: 10px;">
-        </td>
-        <td>${
-          searchObjectByIdAndKey(ownerRoomsArr[i].houseId, "houses").houseName
-        }</td>
-        <td>${ownerRoomsArr[i].roomPrice} TND</td>
-        <td>${ownerRoomsArr[i].roomType}</td>
-        <td>${ownerRoomsArr[i].numBeds}</td>
-        <td>${ownerRoomsArr[i].roomCapacity}</td>
-        <td class="d-flex">
-            <button type="button" class="btn btn-primary btn-sm me-2" onclick="editRoomByOwner(${
-              ownerRoomsArr[i].id
-            })">
-                <i class="fa fa-edit text-center text-light" title="Edit Room"></i>
-            </button>
-            <button type="button" class="btn btn-danger btn-sm" onclick="deleteRoomByOwner(${
-              ownerRoomsArr[i].id
-            })">
-                <i class="fa fa-trash text-center text-light" title="Delete Room"></i>
-            </button>
-        </td>
-      </tr>
-    `;
-    }
-    document.getElementById("roomsOwnerDashboard").innerHTML = content;
-  } else {
+  if (ownerRoomsArr.length == 0) {
     document.getElementById("roomsOwnerDashboard").innerHTML = `
       <tr>
         <td colspan="9" class="text-center text-muted py-4">
@@ -1805,13 +1786,46 @@ function displayRoomsByOwner() {
         </td>
       </tr>
     `;
+  } else {
+    ownerRoomsArr.forEach(r => {
+      const {roomName, roomImg, houseId, roomPrice, roomType, numBeds, roomCapacity, id} = r;   
+      content += `
+    <tr>
+        <td>${roomName}</td>
+        <td>
+        <img src="${roomImg}" class="img-thumbnail" alt="${
+          roomName
+        }"
+        style="width: 150px; height: auto; object-fit: cover; border-radius: 10px;">
+        </td>
+        <td>${
+          searchObjectByIdAndKey(houseId, "houses").houseName
+        }</td>
+        <td>${roomPrice} TND</td>
+        <td>${roomType}</td>
+        <td>${numBeds}</td>
+        <td>${roomCapacity}</td>
+        <td class="d-flex">
+            <button type="button" class="btn btn-primary btn-sm me-2" onclick="editRoomByOwner(${id
+            })">
+                <i class="fa fa-edit text-center text-light" title="Edit Room"></i>
+            </button>
+            <button type="button" class="btn btn-danger btn-sm" onclick="deleteRoomByOwner(${id
+            })">
+                <i class="fa fa-trash text-center text-light" title="Delete Room"></i>
+            </button>
+        </td>
+      </tr>
+    `;});
+    document.getElementById("roomsOwnerDashboard").innerHTML = content;
   }
 }
 
 function editRoomByOwner(roomId) {
   let roomsArr = getFromLS("rooms");
   let foundRoom = roomsArr.find((r) => r.id == roomId);
-  let ownerId = localStorage.getItem("connectedUserId")
+  console.log(foundRoom);
+  let ownerId = localStorage.getItem("connectedUserId");
   let content;
 
   if (!ownerId) {
@@ -1820,6 +1834,17 @@ function editRoomByOwner(roomId) {
     return;
   }
   if (foundRoom) {
+  const {
+  roomName,
+  roomPrice,
+  roomType,
+  roomCapacity,
+  numBeds,
+  roomDescription,
+  roomServices,
+  roomImg,
+  id
+} = foundRoom;
     content = `<div class="container">
   <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
     <h6 class="section-title text-center text-primary text-uppercase">
@@ -1835,9 +1860,6 @@ function editRoomByOwner(roomId) {
       <div class="wow fadeInUp" data-wow-delay="0.2s">
         <div>
           <div class="row g-3">
-            <!-- Hidden Room ID -->
-            <input type="hidden" id="editRoomId" />
-
             <!-- Name -->
             <div class="col-md-12">
               <div class="form-floating">
@@ -1846,7 +1868,7 @@ function editRoomByOwner(roomId) {
                   class="form-control"
                   id="editRoomNameO"
                   placeholder="Room Name"
-                  value="${foundRoom.roomName}"
+                  value="${roomName}"
                 />
                 <label for="editRoomNameO">Room Name</label>
                 <span id="err-editRoomNameO" class="text-danger small"></span>
@@ -1861,7 +1883,7 @@ function editRoomByOwner(roomId) {
                   class="form-control"
                   id="editRoomPriceO"
                   placeholder="Price"
-                  value="${foundRoom.roomPrice}"
+                  value="${roomPrice}"
                 />
                 <label for="editRoomPriceO">Price</label>
                 <span id="err-editRoomPriceO" class="text-danger small"></span>
@@ -1877,16 +1899,16 @@ function editRoomByOwner(roomId) {
                 required
               >
                 <option value="Single" ${
-                  foundRoom.roomType == "Single" ? "selected" : ""
+                  roomType == "Single" ? "selected" : ""
                 }>Single</option>
                 <option value="Double" ${
-                  foundRoom.roomType == "Double" ? "selected" : ""
+                  roomType == "Double" ? "selected" : ""
                 }>Double</option>
                 <option value="Suit" ${
-                  foundRoom.roomType == "Suit" ? "selected" : ""
+                    roomType == "Suit" ? "selected" : ""
                 }>Suit</option>
                 <option value="Family" ${
-                  foundRoom.roomType == "Family" ? "selected" : ""
+                  roomType == "Family" ? "selected" : ""
                 }>Family</option>
               </select>
               <label for="editRoomTypeO">Room Type</label>
@@ -1899,7 +1921,7 @@ function editRoomByOwner(roomId) {
                   type="text"
                   class="form-control"
                   id="editRoomCapacityO"
-                  value="${foundRoom.roomCapacity}"
+                  value="${roomCapacity}"
                 />
                 <label for="editRoomCapacityO">Capacity</label>
                 <span id="err-editRoomCapacityO" class="text-danger small"></span>
@@ -1910,7 +1932,7 @@ function editRoomByOwner(roomId) {
             <div class="col-md-6">
               <div class="form-floating">
                 <input type="text" class="form-control" id="editNumBedsO" value="${
-                  foundRoom.numBeds
+                  numBeds
                 }"/>
                 <label for="editNumBedsO">Number Of Beds</label>
                 <span id="err-editNumBedsO" class="text-danger small"></span>
@@ -1925,7 +1947,7 @@ function editRoomByOwner(roomId) {
                   cols="100"
                   style="height: 100px"
                   class="form-control"
-                >${foundRoom.roomDescription}</textarea>
+                >${roomDescription}</textarea>
                 <label for="editRoomDescriptionO">Description</label>
                 <span id="err-editRoomDescriptionO" class="text-danger small"></span>
               </div>
@@ -1943,7 +1965,7 @@ function editRoomByOwner(roomId) {
                       id="editCheckWiFiO"
                       name="editOptions"
                       ${
-                        foundRoom.roomServices.includes("Wifi") ? "checked" : ""
+                        roomServices.includes("Wifi") ? "checked" : ""
                       }
                     />
                     <label class="form-check-label" for="editCheckWiFiO">Wi-Fi</label>
@@ -1956,7 +1978,7 @@ function editRoomByOwner(roomId) {
                       id="editCheckACO"
                       name="editOptions"
                       ${
-                        foundRoom.roomServices.includes("Air Conditioning")
+                        roomServices.includes("Air Conditioning")
                           ? "checked"
                           : ""
                       }
@@ -1970,7 +1992,7 @@ function editRoomByOwner(roomId) {
                       value="TV"
                       id="editCheckTVO"
                       name="editOptions"
-                      ${foundRoom.roomServices.includes("TV") ? "checked" : ""}
+                      ${roomServices.includes("TV") ? "checked" : ""}
                     />
                     <label class="form-check-label" for="editCheckTVO">TV</label>
                   </div>
@@ -1986,7 +2008,7 @@ function editRoomByOwner(roomId) {
                       id="editCheckRoomServiceO"
                       name="editOptions"
                       ${
-                        foundRoom.roomServices.includes("Room Services")
+                        roomServices.includes("Room Services")
                           ? "checked"
                           : ""
                       }
@@ -2003,7 +2025,7 @@ function editRoomByOwner(roomId) {
                       id="editCheckKitchenetteO"
                       name="editOptions"
                       ${
-                        foundRoom.roomServices.includes("Kitchenette")
+                        roomServices.includes("Kitchenette")
                           ? "checked"
                           : ""
                       }
@@ -2020,7 +2042,7 @@ function editRoomByOwner(roomId) {
                       id="editCheckBathO"
                       name="editOptions"
                       ${
-                        foundRoom.roomServices.includes("Bathtub")
+                        roomServices.includes("Bathtub")
                           ? "checked"
                           : ""
                       }
@@ -2045,7 +2067,7 @@ function editRoomByOwner(roomId) {
                 <label for="editImgRoomUploadO">Update Photo</label>
                 <span id="err-editImgRoomUploadO" class="text-danger small"></span>
                 <img
-                  src="${foundRoom.roomImg}"
+                  src="${roomImg}"
                   alt="preview"
                   id="editPreviewRO"
                   style="width: 200px; display: block; margin-top: 10px"
@@ -2059,7 +2081,7 @@ function editRoomByOwner(roomId) {
                 class="btn btn-warning w-100 py-3"
                 type="button"
                 id="editRoomByOwner-btn"
-                onclick="validateEditRoomByOwner(${foundRoom.id})"
+                onclick="validateEditRoomByOwner(${id})"
               >
                 Save Changes
               </button>
@@ -2072,9 +2094,6 @@ function editRoomByOwner(roomId) {
   </div>
 </div>
 `;
-  } else {
-    console.log("Room not found!");
-    return;
   }
   document.getElementById("editRoomByOwner").innerHTML = content;
 }
@@ -2082,7 +2101,7 @@ function editRoomByOwner(roomId) {
 function validateEditRoomByOwner(roomId) {
   let roomsArr = getFromLS("rooms");
   let foundRoom = roomsArr.find((r) => r.id == roomId);
-  console.log(foundRoom);
+  let {roomImg, roomName, roomPrice, roomType, roomDescription, roomCapacity, numBeds} = foundRoom;
 
   // Regex
   const roomNameRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ0-9\s'-]{3,50}$/;
@@ -2102,7 +2121,7 @@ function validateEditRoomByOwner(roomId) {
   // Img
   let editImgRoomUploadO = document.getElementById("editImgRoomUploadO");
   let editPreviewRO = document.getElementById("editPreviewRO");
-  let oldRoomImg = foundRoom.roomImg;
+  let oldRoomImg = roomImg;
 
   // Validation
   const isRoomNameValid = validateField(
@@ -2110,35 +2129,35 @@ function validateEditRoomByOwner(roomId) {
     "err-editRoomNameO",
     roomNameRegex,
     "Please enter room name",
-    "Only letters and spaces are allowed"
+    "Only letters and spaces are allowed",
   );
   const isRoomPriceValid = validateField(
     "editRoomPriceO",
     "err-editRoomPriceO",
     roomPriceRegex,
     "Please enter price",
-    "The room price must be between 100 and 1000 TND."
+    "The room price must be between 100 and 1000 TND.",
   );
   const isRoomDescValid = validateField(
     "editRoomDescriptionO",
     "err-editRoomDescriptionO",
     roomDescriptionRegex,
     "Please enter description",
-    "Description must be 10–200 characters long"
+    "Description must be 10–200 characters long",
   );
   const isRoomCapacityValid = validateField(
     "editRoomCapacityO",
     "err-editRoomCapacityO",
     roomCapacityRegex,
     "Please enter capacity",
-    "The room capacity must be between 1 and 5"
+    "The room capacity must be between 1 and 5",
   );
   const isNumBedsValid = validateField(
     "editNumBedsO",
     "err-editNumBedsO",
     numBedsRegex,
     "Please enter number of beds",
-    "Please enter a number between 1 and 5."
+    "Please enter a number between 1 and 5.",
   );
 
   if (
@@ -2161,6 +2180,7 @@ function validateEditRoomByOwner(roomId) {
         editPreviewRO.src = reader.result;
         foundRoom.roomImg = reader.result;
         setToLS("rooms", roomsArr);
+        location.replace("ownerDashboard.html");
       };
       reader.readAsDataURL(editImgRoomUploadO.files[0]);
     } else {
@@ -2173,7 +2193,7 @@ function validateEditRoomByOwner(roomId) {
 function updateReservationsBeforeDelRoom(roomId) {
   let reservationsArr = getFromLS("reservations");
   reservationsArr = reservationsArr.filter(
-    (res) => String(res.roomId) !== String(roomId)
+    (res) => String(res.roomId) !== String(roomId),
   );
   setToLS("reservations", reservationsArr);
 }
@@ -2194,17 +2214,17 @@ function displayReservationsByOwner() {
   let reservationsArr = getFromLS("reservations");
 
   let ownerHousesArr = housesArr.filter(
-    (h) => String(h.ownerId) === String(ownerId)
+    (h) => String(h.ownerId) === String(ownerId),
   );
   let ownerHousesIds = ownerHousesArr.map((h) => String(h.id));
 
   let relatedRooms = roomsArr.filter((r) =>
-    ownerHousesIds.includes(String(r.houseId))
+    ownerHousesIds.includes(String(r.houseId)),
   );
   let relatedRoomsIds = relatedRooms.map((r) => String(r.id));
 
   let relatedReservations = reservationsArr.filter((res) =>
-    relatedRoomsIds.includes(res.roomId)
+    relatedRoomsIds.includes(res.roomId),
   );
 
   let content = "";
@@ -2242,7 +2262,7 @@ function displayReservationsByOwner() {
     });
     let totalSum = relatedReservations.reduce(
       (acc, r) => acc + Number(r.totalPrice),
-      0
+      0,
     );
     console.log(totalSum);
     let html = `
@@ -2267,7 +2287,7 @@ function displayReservationsByOwner() {
 function deleteReservationByOwner(resId) {
   let reservationsArr = getFromLS("reservations");
   reservationsArr = reservationsArr.filter(
-    (res) => String(res.id) !== String(resId)
+    (res) => String(res.id) !== String(resId),
   );
   setToLS("reservations", reservationsArr);
   displayReservationsByOwner();
@@ -2283,9 +2303,9 @@ function displayUsersByAdmin() {
     location.replace("login.html");
     return;
   }
-  
+
   let usersArr = getFromLS("users").filter(
-    (u) => u.role === "owner" || u.role === "client"
+    (u) => u.role === "owner" || u.role === "client",
   );
 
   let content = "";
@@ -2387,7 +2407,7 @@ function deleteResBefDelRoomByAdmin(userId) {
     .map((r) => String(r.id));
 
   reservationsArr = reservationsArr.filter(
-    (res) => !relatedRoomsIds.includes(String(res.roomId))
+    (res) => !relatedRoomsIds.includes(String(res.roomId)),
   );
   setToLS("reservations", reservationsArr);
 }
@@ -2416,7 +2436,7 @@ function deleteRelatedHousesByAdmin(userId) {
 function updateReservationsBeforeDelClByAdmin(userId) {
   let reservationsArr = getFromLS("reservations");
   reservationsArr = reservationsArr.filter(
-    (res) => String(res.clientId) !== String(userId)
+    (res) => String(res.clientId) !== String(userId),
   );
   setToLS("reservations", reservationsArr);
 }
@@ -2456,8 +2476,8 @@ function displayHousesByAdmin() {
   style="width: 150px; height: auto; object-fit: cover; border-radius: 10px;">
         </td>
         <td>${searchObjectByIdAndKey(h.ownerId, "users").firstName} ${
-      searchObjectByIdAndKey(h.ownerId, "users").lastName
-    }</td>
+          searchObjectByIdAndKey(h.ownerId, "users").lastName
+        }</td>
         <td>${h.houseCity}</td>
         <td>${h.housePhone}</td>
         <td class="d-flex">
@@ -2544,7 +2564,7 @@ function addRoomByAdmin() {
     "err-adminRoomName",
     roomNameRegex,
     "Please enter room name",
-    "Only letters and spaces are allowed"
+    "Only letters and spaces are allowed",
   );
 
   const isRoomPriceValid = validateField(
@@ -2552,7 +2572,7 @@ function addRoomByAdmin() {
     "err-adminRoomPrice",
     roomPriceRegex,
     "Please enter price",
-    "The room price must be between 100 and 1000 TND."
+    "The room price must be between 100 and 1000 TND.",
   );
 
   const isRoomDescValid = validateField(
@@ -2560,7 +2580,7 @@ function addRoomByAdmin() {
     "err-adminRoomDescription",
     roomDescriptionRegex,
     "Please enter description",
-    "Description must be 10–200 characters long"
+    "Description must be 10–200 characters long",
   );
 
   const isRoomCapacityValid = validateField(
@@ -2568,7 +2588,7 @@ function addRoomByAdmin() {
     "err-adminRoomCapacity",
     roomCapacityRegex,
     "Please enter capacity",
-    "The room capacity must be between 1 and 5"
+    "The room capacity must be between 1 and 5",
   );
 
   const isNumBedsValid = validateField(
@@ -2576,13 +2596,13 @@ function addRoomByAdmin() {
     "err-adminNumBeds",
     numBedsRegex,
     "Please enter number of beds",
-    "Please enter a number between 1 and 5."
+    "Please enter a number between 1 and 5.",
   );
 
   const isRoomTypeValid = validateSelect(
     "adminRoomType",
     "err-adminRoomType",
-    "Please select room type"
+    "Please select room type",
   );
 
   if (
@@ -2752,14 +2772,14 @@ function validateEditHouseByAdmin(id) {
       "err-editHouseNameA",
       houseNameRegex,
       "Please enter the guesthouse name",
-      "Only letters and spaces are allowed (3–50 chars)"
+      "Only letters and spaces are allowed (3–50 chars)",
     );
     const isPhoneValid = validateField(
       "editHousePhoneA",
       "err-editHousePhoneA",
       housePhoneRegex,
       "Please enter a phone number",
-      "Phone number must contain exactly 8 digits"
+      "Phone number must contain exactly 8 digits",
     );
 
     const isCityValid = validateField(
@@ -2767,7 +2787,7 @@ function validateEditHouseByAdmin(id) {
       "err-editHouseCityA",
       houseCityRegex,
       "Please enter the city name",
-      "Invalid city name (letters only)"
+      "Invalid city name (letters only)",
     );
 
     const isLocationValid = validateField(
@@ -2775,7 +2795,7 @@ function validateEditHouseByAdmin(id) {
       "err-editHouseLocationA",
       houseLocationRegex,
       "Please enter the location",
-      "Location must be between 3 and 100 characters"
+      "Location must be between 3 and 100 characters",
     );
 
     const isCapacityValid = validateField(
@@ -2783,7 +2803,7 @@ function validateEditHouseByAdmin(id) {
       "err-editHouseCapacityA",
       houseCapacityRegex,
       "Please enter capacity",
-      "Capacity must be a number greater than 0"
+      "Capacity must be a number greater than 0",
     );
 
     const isDescriptionValid = validateField(
@@ -2791,7 +2811,7 @@ function validateEditHouseByAdmin(id) {
       "err-editHouseDescriptionA",
       houseDescriptionRegex,
       "Please enter a description",
-      "Description must be between 10 and 200 characters"
+      "Description must be between 10 and 200 characters",
     );
     if (
       isNameValid &&
@@ -2845,7 +2865,7 @@ function updateRelatedRoomsAndReservationsByAdmin(houseId) {
   let relatedRoomsIds = relatedRooms.map((r) => r.id);
 
   reservationsArr = reservationsArr.filter(
-    (res) => !relatedRoomsIds.includes(res.roomId)
+    (res) => !relatedRoomsIds.includes(res.roomId),
   );
   roomsArr = roomsArr.filter((r) => r.houseId !== houseId);
   setToLS("rooms", roomsArr);
@@ -2897,7 +2917,7 @@ function addHouseByAdmin() {
     "err-adminHouseName",
     houseNameRegex,
     "Please enter house name",
-    "Only letters, numbers and spaces are allowed"
+    "Only letters, numbers and spaces are allowed",
   );
 
   const isHousePhoneValid = validateField(
@@ -2905,7 +2925,7 @@ function addHouseByAdmin() {
     "err-adminHousePhone",
     housePhoneRegex,
     "Please enter house phone number",
-    "Phone must be 8–15 digits"
+    "Phone must be 8–15 digits",
   );
 
   const isHouseCityValid = validateField(
@@ -2913,7 +2933,7 @@ function addHouseByAdmin() {
     "err-adminHouseCity",
     houseCityRegex,
     "Please enter city",
-    "City must be 2–30 characters long"
+    "City must be 2–30 characters long",
   );
 
   const isHouseLocationValid = validateField(
@@ -2921,7 +2941,7 @@ function addHouseByAdmin() {
     "err-adminHouseLocation",
     houseLocationRegex,
     "Please enter location",
-    "Location must be 3–100 characters long"
+    "Location must be 3–100 characters long",
   );
 
   const isHouseCapacityValid = validateField(
@@ -2929,7 +2949,7 @@ function addHouseByAdmin() {
     "err-adminHouseCapacity",
     houseCapacityRegex,
     "Please enter capacity",
-    "Capacity must be between 1 and 100 guests."
+    "Capacity must be between 1 and 100 guests.",
   );
 
   const isHouseDescValid = validateField(
@@ -2937,13 +2957,13 @@ function addHouseByAdmin() {
     "err-adminHouseDescription",
     houseDescriptionRegex,
     "Please enter description",
-    "Description must be 10–100 characters long"
+    "Description must be 10–100 characters long",
   );
 
   const isOwnerSelected = validateSelect(
     "selectOwner",
     "err-selectOwner",
-    "Please select an owner"
+    "Please select an owner",
   );
 
   if (
@@ -3271,7 +3291,7 @@ function validateEditRoomByAdmin(roomId) {
     "err-editAdminRoomName",
     roomNameRegex,
     "Please enter room name",
-    "Only letters and spaces are allowed"
+    "Only letters and spaces are allowed",
   );
 
   const isRoomPriceValid = validateField(
@@ -3279,7 +3299,7 @@ function validateEditRoomByAdmin(roomId) {
     "err-editAdminRoomPrice",
     roomPriceRegex,
     "Please enter price",
-    "The room price must be between 100 and 1000 TND."
+    "The room price must be between 100 and 1000 TND.",
   );
 
   const isRoomDescValid = validateField(
@@ -3287,7 +3307,7 @@ function validateEditRoomByAdmin(roomId) {
     "err-editAdminRoomDescription",
     roomDescriptionRegex,
     "Please enter description",
-    "Description must be 10–200 characters long"
+    "Description must be 10–200 characters long",
   );
 
   const isRoomCapacityValid = validateField(
@@ -3295,7 +3315,7 @@ function validateEditRoomByAdmin(roomId) {
     "err-editAdminRoomCapacity",
     roomCapacityRegex,
     "Please enter capacity",
-    "The room capacity must be between 1 and 5"
+    "The room capacity must be between 1 and 5",
   );
 
   const isNumBedsValid = validateField(
@@ -3303,13 +3323,13 @@ function validateEditRoomByAdmin(roomId) {
     "err-editAdminNumBeds",
     numBedsRegex,
     "Please enter number of beds",
-    "Please enter a number between 1 and 5."
+    "Please enter a number between 1 and 5.",
   );
 
   const isRoomTypeValid = validateSelect(
     "editAdminRoomType",
     "err-editAdminRoomType",
-    "Please select room type"
+    "Please select room type",
   );
   if (
     isRoomNameValid &&
@@ -3366,7 +3386,7 @@ function updateReservationsBeforeDelRoomByAdmin(roomId) {
   let relatedRoomsIds = relatedRooms.map((r) => r.id);
 
   reservationsArr = reservationsArr.filter(
-    (res) => !relatedRoomsIds.includes(res.roomId)
+    (res) => !relatedRoomsIds.includes(res.roomId),
   );
   setToLS("reservations", reservationsArr);
 }
@@ -3419,7 +3439,7 @@ function displayReservationsByAdmin() {
   });
   let totalSum = reservationsArr.reduce(
     (acc, curr) => acc + Number(curr.totalPrice),
-    0
+    0,
   );
   let html = `
   <button type="button" class="btn btn-warning mt-5 rounded" style="white-space: nowrap;">
@@ -3431,7 +3451,7 @@ function displayReservationsByAdmin() {
 function deleteReservationByAdmin(resId) {
   let reservationsArr = getFromLS("reservations");
   reservationsArr = reservationsArr.filter(
-    (res) => String(res.id) !== String(resId)
+    (res) => String(res.id) !== String(resId),
   );
   setToLS("reservations", reservationsArr);
   displayReservationsByAdmin();
@@ -3490,21 +3510,16 @@ init();
 
 function countHouses() {
   const housesArr = getFromLS("houses");
-  const count = housesArr.length;
-  document.getElementById("contentHouses").innerHTML = count;
+  document.getElementById("contentHouses").innerHTML = housesArr.length;;
 }
 
 function countRooms() {
   const roomsArr = getFromLS("rooms");
-  const count = roomsArr.length;
-  document.getElementById("contentRooms").innerHTML = count;
+  document.getElementById("contentRooms").innerHTML = roomsArr.length;
 }
 
 function countClients() {
   const usersArr = getFromLS("users");
-  const count = usersArr.reduce((acc, curr) => {
-    curr.role == "client" ? acc++ : acc;
-    return acc;
-  }, 0);
+  const count = usersArr.filter(u => u.role === "client").length;
   document.getElementById("contentClients").innerHTML = count;
 }
