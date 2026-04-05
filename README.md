@@ -7,7 +7,7 @@ This project allows different users (clients, owners, and admins) to interact wi
 
 ## 🚀 Live Demo
 
-*(Add your deployed link here — Vercel / Netlify)*
+https://darnest-management.vercel.app/
 
 ---
 
