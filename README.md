@@ -48,7 +48,6 @@ https://darnest-management.vercel.app/
 ### 🛒 Reservation Cart
 
 * View all reservations
-* Cancel reservations بسهولة
 
 ### 🔍 Search
 
@@ -139,7 +138,7 @@ project/
 ## 👩‍💻 Author
 
 * Hayfa Chelbi
-* GitHub: **
+* GitHub: https://github.com/chelbihayfa89
 
 ---
 

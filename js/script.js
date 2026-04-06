@@ -479,21 +479,15 @@ function generateHeader() {
 
 function displayProfile() {
   let connectedUserId = Number(localStorage.getItem("connectedUserId"));
-  if (!connectedUserId) {
-    console.log("No user connected");
-    return;
-  }
+  if (!connectedUserId) return;
   let user = searchObjectByIdAndKey(connectedUserId, "users");
-  if (user) {
-    const { firstName, lastName, address, email, phone } = user;
-    document.getElementById("username").textContent =
-      `${firstName.toUpperCase()} ${lastName.toUpperCase()}`;
-    document.getElementById("userAdr").textContent = address;
-    document.getElementById("userEmail").textContent = email;
-    document.getElementById("userPhone").textContent = phone;
-  } else {
-    console.log("No user found in LS");
-  }
+  if (!user) return;
+  const { firstName, lastName, address, email, phone } = user;
+  document.getElementById("username").textContent =
+    `${firstName.toUpperCase()} ${lastName.toUpperCase()}`;
+  document.getElementById("userAdr").textContent = address;
+  document.getElementById("userEmail").textContent = email;
+  document.getElementById("userPhone").textContent = phone;
 }
 
 // ======================================================
@@ -502,13 +496,11 @@ function displayProfile() {
 
 function editProfile() {
   let connectedUserId = Number(localStorage.getItem("connectedUserId"));
-  if (!connectedUserId) {
-    console.log("no user connected");
-  }
+  if (!connectedUserId) return;
   let user = searchObjectByIdAndKey(connectedUserId, "users");
   let content = "";
   if (!user) {
-     document.getElementById("editProfileForm").innerHTML =
+    document.getElementById("editProfileForm").innerHTML =
       "<p class='text-danger'>User not found</p>";
     return;
   } else {
@@ -610,6 +602,7 @@ function validateEditProfile() {
   let connectedUserId = Number(localStorage.getItem("connectedUserId"));
   let usersArr = getFromLS("users");
   let user = usersArr.find((u) => u?.id === connectedUserId);
+  if (!user) return;
 
   // --- Regex Patterns ---
   const nameRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ\s-]+$/;
@@ -731,11 +724,6 @@ function validateEditProfile() {
     setToLS("users", usersArr);
     displayProfile();
     document.getElementById("editProfileForm").style.display = "none";
-
-    if (!user) {
-      console.log("User not found!");
-      return;
-    }
   }
 }
 
@@ -751,7 +739,16 @@ function displayHouses() {
   let housesArr = getFromLS("houses");
   let content = "";
   housesArr.forEach((house) => {
-    const { id, houseName, houseImg, houseCapacity, houseCity, housePhone, houseLocation, houseDescription } = house;
+    const {
+      id,
+      houseName,
+      houseImg,
+      houseCapacity,
+      houseCity,
+      housePhone,
+      houseLocation,
+      houseDescription,
+    } = house;
     content += `
     <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
               <div class="room-item shadow rounded overflow-hidden">
@@ -822,7 +819,7 @@ function displayRoomsForSelectedHouse() {
       </div>`;
   } else {
     roomsForThisHouseArr.forEach((room) => {
-      const {roomImg, roomPrice, roomName, roomType, roomCapacity, id} = room;
+      const { roomImg, roomPrice, roomName, roomType, roomCapacity, id } = room;
       content += `
         <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
           <div class="room-item shadow rounded overflow-hidden">
@@ -893,7 +890,17 @@ function displaySelectedRoomDetails() {
       <p>Room not found.</p>
     </div>`;
   } else {
-    const {id, numBeds, roomCapacity, roomDescription, roomImg, roomName, roomPrice, roomServices, roomType} = selectedRoom;
+    const {
+      id,
+      numBeds,
+      roomCapacity,
+      roomDescription,
+      roomImg,
+      roomName,
+      roomPrice,
+      roomServices,
+      roomType,
+    } = selectedRoom;
     let rServices = `${roomServices
       .map(
         (s) =>
@@ -969,7 +976,6 @@ function booking(event) {
 
   let user = usersArr.find((u) => u.id == connectedUserId);
   let room = roomsArr.find((r) => r.id == roomId);
-  console.log(room);
 
   // Récupération des valeurs
   let firstname = document.getElementById("bookingFirstname").value;
@@ -989,7 +995,6 @@ function booking(event) {
       ? (checkoutBooking - checkinBooking) / (1000 * 60 * 60 * 24)
       : 0;
   let totalPrice = totalGuests * Number(room.roomPrice) * Number(nights);
-  console.log(totalGuests, totalPrice, nights);
 
   // Spans d'erreur
   let errEmail = document.getElementById("err-emailBooking");
@@ -1089,8 +1094,6 @@ function booking(event) {
     setToLS("reservations", reservationsArr);
     location.replace("cart.html");
   }
-  console.log("totalGuests:", totalGuests, typeof totalGuests);
-  console.log("room.capacity:", room.roomCapacity, typeof room.roomCapacity);
 }
 
 function clientReservations() {
@@ -1100,7 +1103,7 @@ function clientReservations() {
   let reservationsArr = getFromLS("reservations");
 
   let user = usersArr.find((u) => u.id == connectedUserId);
-  let {firstName, lastName} = user;
+  let { firstName, lastName } = user;
 
   let content = "";
   let clientReservations = reservationsArr.filter(
@@ -1114,13 +1117,20 @@ function clientReservations() {
   } else {
     clientReservations.forEach((res) => {
       let room = searchObjectByIdAndKey(res.roomId, "rooms");
-      let {roomName, roomPrice} = room;
-      let {roomId, numGuests, checkinBooking, checkoutBooking,totalPrice,id} = res;
+      let { roomName, roomPrice } = room;
+      let {
+        roomId,
+        numGuests,
+        checkinBooking,
+        checkoutBooking,
+        totalPrice,
+        id,
+      } = res;
       let house = searchObjectByIdAndKey(
         searchObjectByIdAndKey(roomId, "rooms").houseId,
         "houses",
       );
-      let {houseName} = house;
+      let { houseName } = house;
       content += `
       <tr>
         <td>${roomName}}</td>
@@ -1131,7 +1141,8 @@ function clientReservations() {
         <td>${new Date(checkinBooking).toLocaleDateString("fr-FR")}</td>
         <td>${new Date(checkoutBooking).toLocaleDateString("fr-FR")}</td>
         <td>${totalPrice} DT</td>
-        <td><button type="button" class="btn btn-danger btn-sm" onclick="deleteClientReservation(${id
+        <td><button type="button" class="btn btn-danger btn-sm" onclick="deleteClientReservation(${
+          id
         })">
                 <i class="fa fa-trash text-center text-light" title="Delete Reservation"></i>
             </button>
@@ -1316,7 +1327,7 @@ function addRoomByOwner() {
 
   // Services (checkbox)
   const checkboxes = document.querySelectorAll('input[name="options"]:checked');
-  let services = Array.from(checkboxes).map( v => v.value);
+  let services = Array.from(checkboxes).map((v) => v.value);
 
   if (!ownerId) {
     alert("Please log in first!");
@@ -1445,14 +1456,12 @@ function displayHousesByOwner() {
     `;
   } else {
     ownerHousesArr.forEach((house) => {
-      let {houseName, houseImg, housePhone, houseCity, id} = house;
+      let { houseName, houseImg, housePhone, houseCity, id } = house;
       content += `
         <tr>
           <td>${houseName}</td>
           <td>
-            <img src="${houseImg}" class="img-thumbnail" alt="${
-              houseName
-            }"
+            <img src="${houseImg}" class="img-thumbnail" alt="${houseName}"
             style="width: 150px; height: auto; object-fit: cover; border-radius: 10px;">
           </td>
           <td>${housePhone}</td>
@@ -1516,7 +1525,16 @@ function editHouseByOwner(houseId) {
   }
 
   if (foundHouse) {
-    const {houseName, housePhone, houseCity, houseLocation, houseDescription, houseCapacity, houseImg, id} = foundHouse;
+    const {
+      houseName,
+      housePhone,
+      houseCity,
+      houseLocation,
+      houseDescription,
+      houseCapacity,
+      houseImg,
+      id,
+    } = foundHouse;
     content = `<div class="container-xxl bg-white p-0">
 
       <!-- Edit Guesthouse Start -->
@@ -1611,7 +1629,6 @@ function editHouseByOwner(houseId) {
   }
   document.getElementById("editHouseByOwner").innerHTML = content;
 }
-
 
 function validateEditHouseByOwner(houseId) {
   let housesArr = getFromLS("houses");
@@ -1721,24 +1738,19 @@ function validateEditHouseByOwner(houseId) {
 }
 
 function deleteHouseByOwner(houseId) {
-  let housesArr = getFromLS("houses");
   const ownerId = localStorage.getItem("connectedUserId");
-  let pos = housesArr.findIndex((h) => h.id === houseId);
-
   if (!ownerId) {
-    alert("Please log in first!");
     window.location.href = "login.html";
     return;
   }
+  let housesArr = getFromLS("houses");
+  let pos = housesArr.findIndex((h) => h?.id === houseId);
 
-  if (pos === -1) {
-    console.log("No house found with this Id");
-  } else {
-    updateRelatedRoomsAndReservations(houseId);
-    housesArr.splice(pos, 1);
-    setToLS("houses", housesArr);
-    displayHousesByOwner();
-  }
+  if (pos === -1) return;
+  updateRelatedRoomsAndReservations(houseId);
+  housesArr.splice(pos, 1);
+  setToLS("houses", housesArr);
+  displayHousesByOwner();
 }
 
 function updateRelatedRoomsAndReservations(houseId) {
@@ -1746,8 +1758,8 @@ function updateRelatedRoomsAndReservations(houseId) {
   let reservationsArr = getFromLS("reservations");
 
   let relatedRoomsIds = roomsArr
-  .filter((r) => r.houseId === houseId)
-  .map((r) => r.id);
+    .filter((r) => r.houseId === houseId)
+    .map((r) => r.id);
 
   reservationsArr = reservationsArr.filter(
     (res) => !relatedRoomsIds.includes(res.roomId),
@@ -1787,36 +1799,44 @@ function displayRoomsByOwner() {
       </tr>
     `;
   } else {
-    ownerRoomsArr.forEach(r => {
-      const {roomName, roomImg, houseId, roomPrice, roomType, numBeds, roomCapacity, id} = r;   
+    ownerRoomsArr.forEach((r) => {
+      const {
+        roomName,
+        roomImg,
+        houseId,
+        roomPrice,
+        roomType,
+        numBeds,
+        roomCapacity,
+        id,
+      } = r;
       content += `
     <tr>
         <td>${roomName}</td>
         <td>
-        <img src="${roomImg}" class="img-thumbnail" alt="${
-          roomName
-        }"
+        <img src="${roomImg}" class="img-thumbnail" alt="${roomName}"
         style="width: 150px; height: auto; object-fit: cover; border-radius: 10px;">
         </td>
-        <td>${
-          searchObjectByIdAndKey(houseId, "houses").houseName
-        }</td>
+        <td>${searchObjectByIdAndKey(houseId, "houses").houseName}</td>
         <td>${roomPrice} TND</td>
         <td>${roomType}</td>
         <td>${numBeds}</td>
         <td>${roomCapacity}</td>
         <td class="d-flex">
-            <button type="button" class="btn btn-primary btn-sm me-2" onclick="editRoomByOwner(${id
+            <button type="button" class="btn btn-primary btn-sm me-2" onclick="editRoomByOwner(${
+              id
             })">
                 <i class="fa fa-edit text-center text-light" title="Edit Room"></i>
             </button>
-            <button type="button" class="btn btn-danger btn-sm" onclick="deleteRoomByOwner(${id
+            <button type="button" class="btn btn-danger btn-sm" onclick="deleteRoomByOwner(${
+              id
             })">
                 <i class="fa fa-trash text-center text-light" title="Delete Room"></i>
             </button>
         </td>
       </tr>
-    `;});
+    `;
+    });
     document.getElementById("roomsOwnerDashboard").innerHTML = content;
   }
 }
@@ -1824,27 +1844,25 @@ function displayRoomsByOwner() {
 function editRoomByOwner(roomId) {
   let roomsArr = getFromLS("rooms");
   let foundRoom = roomsArr.find((r) => r.id == roomId);
-  console.log(foundRoom);
   let ownerId = localStorage.getItem("connectedUserId");
   let content;
 
   if (!ownerId) {
-    alert("Please log in first!");
     window.location.href = "login.html";
     return;
   }
   if (foundRoom) {
-  const {
-  roomName,
-  roomPrice,
-  roomType,
-  roomCapacity,
-  numBeds,
-  roomDescription,
-  roomServices,
-  roomImg,
-  id
-} = foundRoom;
+    const {
+      roomName,
+      roomPrice,
+      roomType,
+      roomCapacity,
+      numBeds,
+      roomDescription,
+      roomServices,
+      roomImg,
+      id,
+    } = foundRoom;
     content = `<div class="container">
   <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
     <h6 class="section-title text-center text-primary text-uppercase">
@@ -1905,7 +1923,7 @@ function editRoomByOwner(roomId) {
                   roomType == "Double" ? "selected" : ""
                 }>Double</option>
                 <option value="Suit" ${
-                    roomType == "Suit" ? "selected" : ""
+                  roomType == "Suit" ? "selected" : ""
                 }>Suit</option>
                 <option value="Family" ${
                   roomType == "Family" ? "selected" : ""
@@ -1964,9 +1982,7 @@ function editRoomByOwner(roomId) {
                       value="Wifi"
                       id="editCheckWiFiO"
                       name="editOptions"
-                      ${
-                        roomServices.includes("Wifi") ? "checked" : ""
-                      }
+                      ${roomServices.includes("Wifi") ? "checked" : ""}
                     />
                     <label class="form-check-label" for="editCheckWiFiO">Wi-Fi</label>
                   </div>
@@ -2007,11 +2023,7 @@ function editRoomByOwner(roomId) {
                       value="Room Services"
                       id="editCheckRoomServiceO"
                       name="editOptions"
-                      ${
-                        roomServices.includes("Room Services")
-                          ? "checked"
-                          : ""
-                      }
+                      ${roomServices.includes("Room Services") ? "checked" : ""}
                     />
                     <label class="form-check-label" for="editCheckRoomServiceO"
                       >Room Services</label
@@ -2024,11 +2036,7 @@ function editRoomByOwner(roomId) {
                       value="Kitchenette"
                       id="editCheckKitchenetteO"
                       name="editOptions"
-                      ${
-                        roomServices.includes("Kitchenette")
-                          ? "checked"
-                          : ""
-                      }
+                      ${roomServices.includes("Kitchenette") ? "checked" : ""}
                     />
                     <label class="form-check-label" for="editCheckKitchenetteO"
                       >Kitchenette</label
@@ -2041,11 +2049,7 @@ function editRoomByOwner(roomId) {
                       value="Bathtub"
                       id="editCheckBathO"
                       name="editOptions"
-                      ${
-                        roomServices.includes("Bathtub")
-                          ? "checked"
-                          : ""
-                      }
+                      ${roomServices.includes("Bathtub") ? "checked" : ""}
                     />
                     <label class="form-check-label" for="editCheckBathO"
                       >Bathtub</label
@@ -2101,7 +2105,6 @@ function editRoomByOwner(roomId) {
 function validateEditRoomByOwner(roomId) {
   let roomsArr = getFromLS("rooms");
   let foundRoom = roomsArr.find((r) => r.id == roomId);
-  let {roomImg, roomName, roomPrice, roomType, roomDescription, roomCapacity, numBeds} = foundRoom;
 
   // Regex
   const roomNameRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ0-9\s'-]{3,50}$/;
@@ -2264,7 +2267,6 @@ function displayReservationsByOwner() {
       (acc, r) => acc + Number(r.totalPrice),
       0,
     );
-    console.log(totalSum);
     let html = `
   <button type="button" class="btn btn-warning mt-5 rounded" style="white-space: nowrap;">
   <small>Total Sum: ${totalSum} TND</small><span class="badge bg-secondary">${relatedReservations.length}</span>
@@ -2360,23 +2362,17 @@ function displayUsersByAdmin() {
 function validateOwner(id) {
   let usersArr = getFromLS("users");
   let foundUser = usersArr.find((u) => u.id === id);
-  if (foundUser) {
-    foundUser.status = "validated";
-    setToLS("users", usersArr);
-    displayUsersByAdmin();
-  } else {
-    console.log("No user found with this Id");
-  }
+  if (!foundUser) return;
+  foundUser.status = "validated";
+  setToLS("users", usersArr);
+  displayUsersByAdmin();
 }
 
 function deleteUser(id) {
   let usersArr = getFromLS("users");
   let pos = usersArr.findIndex((u) => u.id === id);
 
-  if (pos === -1) {
-    console.log("No user found with this Id");
-    return;
-  }
+  if (pos === -1) return;
 
   let foundUser = usersArr[pos];
 
@@ -2741,105 +2737,102 @@ function editHouseByAdmin(id) {
 function validateEditHouseByAdmin(id) {
   let housesArr = getFromLS("houses");
   let foundHouse = housesArr.find((h) => h.id === id);
-  if (!foundHouse) {
-    console.log("No House Founs With This Id");
-  } else {
-    // Inputs
-    let name = getInpValue("editHouseNameA");
-    let phone = getInpValue("editHousePhoneA");
-    let city = getInpValue("editHouseCityA");
-    let location = getInpValue("editHouseLocationA");
-    let capacity = getInpValue("editHouseCapacityA");
-    let description = getInpValue("editHouseDescriptionA");
+  if (!foundHouse) return;
 
-    // Regex
-    const houseNameRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ0-9\s'-]{3,50}$/;
-    const housePhoneRegex = /^[0-9]{8,15}$/;
-    const houseCityRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ\s-]{2,30}$/;
-    const houseLocationRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ0-9\s,.-]{3,100}$/;
-    const houseDescriptionRegex =
-      /^[A-Za-zÀ-ÖØ-öø-ÿ0-9\s.,;:'"!?()%-]{10,100}$/;
-    const houseCapacityRegex = /^(?:[1-9]|[1-9][0-9]|100)$/;
+  // Inputs
+  let name = getInpValue("editHouseNameA");
+  let phone = getInpValue("editHousePhoneA");
+  let city = getInpValue("editHouseCityA");
+  let location = getInpValue("editHouseLocationA");
+  let capacity = getInpValue("editHouseCapacityA");
+  let description = getInpValue("editHouseDescriptionA");
 
-    // Img
-    let imgInput = document.getElementById("editImgHouseUploadA");
-    let preview = document.getElementById("editPreviewA");
-    let oldHouseImg = foundHouse.houseImg;
+  // Regex
+  const houseNameRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ0-9\s'-]{3,50}$/;
+  const housePhoneRegex = /^[0-9]{8,15}$/;
+  const houseCityRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ\s-]{2,30}$/;
+  const houseLocationRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ0-9\s,.-]{3,100}$/;
+  const houseDescriptionRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ0-9\s.,;:'"!?()%-]{10,100}$/;
+  const houseCapacityRegex = /^(?:[1-9]|[1-9][0-9]|100)$/;
 
-    // Validation
-    const isNameValid = validateField(
-      "editHouseNameA",
-      "err-editHouseNameA",
-      houseNameRegex,
-      "Please enter the guesthouse name",
-      "Only letters and spaces are allowed (3–50 chars)",
-    );
-    const isPhoneValid = validateField(
-      "editHousePhoneA",
-      "err-editHousePhoneA",
-      housePhoneRegex,
-      "Please enter a phone number",
-      "Phone number must contain exactly 8 digits",
-    );
+  // Img
+  let imgInput = document.getElementById("editImgHouseUploadA");
+  let preview = document.getElementById("editPreviewA");
+  let oldHouseImg = foundHouse.houseImg;
 
-    const isCityValid = validateField(
-      "editHouseCityA",
-      "err-editHouseCityA",
-      houseCityRegex,
-      "Please enter the city name",
-      "Invalid city name (letters only)",
-    );
+  // Validation
+  const isNameValid = validateField(
+    "editHouseNameA",
+    "err-editHouseNameA",
+    houseNameRegex,
+    "Please enter the guesthouse name",
+    "Only letters and spaces are allowed (3–50 chars)",
+  );
+  const isPhoneValid = validateField(
+    "editHousePhoneA",
+    "err-editHousePhoneA",
+    housePhoneRegex,
+    "Please enter a phone number",
+    "Phone number must contain exactly 8 digits",
+  );
 
-    const isLocationValid = validateField(
-      "editHouseLocationA",
-      "err-editHouseLocationA",
-      houseLocationRegex,
-      "Please enter the location",
-      "Location must be between 3 and 100 characters",
-    );
+  const isCityValid = validateField(
+    "editHouseCityA",
+    "err-editHouseCityA",
+    houseCityRegex,
+    "Please enter the city name",
+    "Invalid city name (letters only)",
+  );
 
-    const isCapacityValid = validateField(
-      "editHouseCapacityA",
-      "err-editHouseCapacityA",
-      houseCapacityRegex,
-      "Please enter capacity",
-      "Capacity must be a number greater than 0",
-    );
+  const isLocationValid = validateField(
+    "editHouseLocationA",
+    "err-editHouseLocationA",
+    houseLocationRegex,
+    "Please enter the location",
+    "Location must be between 3 and 100 characters",
+  );
 
-    const isDescriptionValid = validateField(
-      "editHouseDescriptionA",
-      "err-editHouseDescriptionA",
-      houseDescriptionRegex,
-      "Please enter a description",
-      "Description must be between 10 and 200 characters",
-    );
-    if (
-      isNameValid &&
-      isCityValid &&
-      isDescriptionValid &&
-      isCapacityValid &&
-      isLocationValid &&
-      isPhoneValid
-    ) {
-      foundHouse.houseName = name;
-      foundHouse.houseCity = city;
-      foundHouse.houseCapacity = capacity;
-      foundHouse.houseLocation = location;
-      foundHouse.housePhone = phone;
-      foundHouse.houseDescription = description;
+  const isCapacityValid = validateField(
+    "editHouseCapacityA",
+    "err-editHouseCapacityA",
+    houseCapacityRegex,
+    "Please enter capacity",
+    "Capacity must be a number greater than 0",
+  );
 
-      if (imgInput.files && imgInput.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function () {
-          preview.src = reader.result;
-          foundHouse.houseImg = reader.result;
-          setToLS("houses", housesArr);
-        };
-        reader.readAsDataURL(imgInput.files[0]);
-      } else {
-        foundHouse.houseImg = oldHouseImg;
+  const isDescriptionValid = validateField(
+    "editHouseDescriptionA",
+    "err-editHouseDescriptionA",
+    houseDescriptionRegex,
+    "Please enter a description",
+    "Description must be between 10 and 200 characters",
+  );
+  if (
+    isNameValid &&
+    isCityValid &&
+    isDescriptionValid &&
+    isCapacityValid &&
+    isLocationValid &&
+    isPhoneValid
+  ) {
+    foundHouse.houseName = name;
+    foundHouse.houseCity = city;
+    foundHouse.houseCapacity = capacity;
+    foundHouse.houseLocation = location;
+    foundHouse.housePhone = phone;
+    foundHouse.houseDescription = description;
+
+    if (imgInput.files && imgInput.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function () {
+        preview.src = reader.result;
+        foundHouse.houseImg = reader.result;
         setToLS("houses", housesArr);
-      }
+      };
+      reader.readAsDataURL(imgInput.files[0]);
+    } else {
+      foundHouse.houseImg = oldHouseImg;
+      setToLS("houses", housesArr);
     }
   }
 }
@@ -2847,14 +2840,11 @@ function validateEditHouseByAdmin(id) {
 function deleteHouseByAdmin(houseId) {
   let housesArr = getFromLS("houses");
   let pos = housesArr.findIndex((h) => h.id === houseId);
-  if (pos === -1) {
-    console.log("No house found with this Id");
-  } else {
-    updateRelatedRoomsAndReservationsByAdmin(houseId);
-    housesArr.splice(pos, 1);
-    setToLS("houses", housesArr);
-    displayHousesByAdmin();
-  }
+  if (pos === -1) return;
+  updateRelatedRoomsAndReservationsByAdmin(houseId);
+  housesArr.splice(pos, 1);
+  setToLS("houses", housesArr);
+  displayHousesByAdmin();
 }
 
 function updateRelatedRoomsAndReservationsByAdmin(houseId) {
@@ -3059,9 +3049,8 @@ function editRoomByAdmin(roomId) {
   let foundRoom = roomsArr.find((r) => r.id === roomId);
   let content = "";
   let container = document.getElementById("editRoomByAdmin");
-  console.log(foundRoom);
   if (!foundRoom) {
-    // container.innerHTML = "No room found with this Id";
+    container.innerHTML = "No room found with this Id";
   } else {
     content = `
     <div class="container">
@@ -3407,7 +3396,6 @@ function displayReservationsByAdmin() {
   }
   reservationsArr.forEach((res) => {
     let foundRoom = searchObjectByIdAndKey(res.roomId, "rooms");
-    console.log(foundRoom);
     let foundHouse = searchObjectByIdAndKey(foundRoom.houseId, "houses");
     let foundUser = searchObjectByIdAndKey(res.clientId, "users");
     content += `
@@ -3510,7 +3498,7 @@ init();
 
 function countHouses() {
   const housesArr = getFromLS("houses");
-  document.getElementById("contentHouses").innerHTML = housesArr.length;;
+  document.getElementById("contentHouses").innerHTML = housesArr.length;
 }
 
 function countRooms() {
@@ -3520,6 +3508,6 @@ function countRooms() {
 
 function countClients() {
   const usersArr = getFromLS("users");
-  const count = usersArr.filter(u => u.role === "client").length;
+  const count = usersArr.filter((u) => u.role === "client").length;
   document.getElementById("contentClients").innerHTML = count;
 }
