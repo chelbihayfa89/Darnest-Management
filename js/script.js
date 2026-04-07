@@ -735,6 +735,13 @@ function roomsCount(houseId) {
   );
 }
 
+function cheapestRoom(houseId) {
+  let roomsArr = getFromLS("rooms");
+  let relatedRooms = roomsArr.filter(r => r.houseId == houseId);
+  if (relatedRooms.length === 0) return null;
+  return Math.min(...relatedRooms.map(r => r.roomPrice));
+}
+
 function displayHouses() {
   let housesArr = getFromLS("houses");
   let content = "";
@@ -757,7 +764,7 @@ function displayHouses() {
                   style="max-height: 300px; object-fit: cover; width: 100%;"/>
                   <small
                     class="position-absolute start-0 top-100 translate-middle-y bg-primary text-white rounded py-1 px-3 ms-4"
-                    >Starting From</small
+                    >Starting From ${cheapestRoom(id)} TND</small
                   >
                 </div>
                 <div class="p-4 mt-2">
@@ -1112,7 +1119,7 @@ function clientReservations() {
   if (clientReservations && clientReservations.length == 0) {
     content = `
     <tr>
-        <th scope="row" colspan="10">No reservations found!</th>
+        <th scope="row" colspan="10" class="text-center">No reservations found!</th>
       </tr>`;
   } else {
     clientReservations.forEach((res) => {
@@ -2301,7 +2308,6 @@ function deleteReservationByOwner(resId) {
 function displayUsersByAdmin() {
   const connectedUserId = localStorage.getItem("connectedUserId");
   if (!connectedUserId) {
-    alert("Accès refusé !");
     location.replace("login.html");
     return;
   }
@@ -2312,33 +2318,33 @@ function displayUsersByAdmin() {
 
   let content = "";
   if (usersArr.length > 0) {
-    usersArr.forEach((u) => {
+    usersArr.forEach((user) => {
+      let {id, firstName, lastName, email, phone, role, status} = user
       content += `
     <tr>
-      <td>${u.id}</td>
-      <td>${u.firstName} ${u.lastName}</td>
-      <td>${u.email}</td>
-      <td>${u.phone}</td>
-      <td>${u.role}</td>
-      <td>${u.status ? u.status : "__"}</td>
+      <td>${firstName} ${lastName}</td>
+      <td>${email}</td>
+      <td>${phone}</td>
+      <td>${role}</td>
+      <td>${status ? status : "__"}</td>
 
       <td>
         ${
-          u.role === "owner" && u.status == "not validated"
+          role === "owner" && status == "not validated"
             ? `
               <button class="btn btn-success btn-sm me-1"
-                      onclick="validateOwner(${u.id})">
+                      onclick="validateOwner(${id})">
                 <i class="fa fa-check text-light" title="Validate Owner"></i>
               </button>
 
               <button class="btn btn-danger btn-sm"
-                      onclick="deleteUser(${u.id})">
+                      onclick="deleteUser(${id})">
                 <i class="fa fa-trash text-light" title="Delete User"></i>
               </button>
             `
             : `
               <button class="btn btn-danger btn-sm"
-                      onclick="deleteUser(${u.id})">
+                      onclick="deleteUser(${id})">
                 <i class="fa fa-trash text-light" title="Delete User"></i>
               </button>
             `
@@ -2443,7 +2449,7 @@ function displayHousesByAdmin() {
 
   let addHouseContent = `
   <tr>
-    <td colspan="7" class="text-center">
+    <td colspan="6" class="text-center">
     <button type="button" class="btn btn-success mt-3" onclick="goToAddHouseByAdmin()">
     <i class="fa fa-plus text-center text-light"></i> ADD HOUSE
     </button></td>
@@ -2452,7 +2458,7 @@ function displayHousesByAdmin() {
 
   if (housesArr.length === 0) {
     container.innerHTML = `<tr>
-        <td colspan="7" class="text-center text-muted">
+        <td colspan="6" class="text-center text-muted">
           No houses found. Click "Add House" to create one.
         </td>
       </tr> ${addHouseContent}`;
@@ -2460,35 +2466,35 @@ function displayHousesByAdmin() {
   }
 
   let content = "";
-  housesArr.forEach((h) => {
+  housesArr.forEach((house) => {
+    let {id, houseName, houseImg, houseCity, housePhone, ownerId} = house;
     content += `
       <tr>
-        <td>${h.id}</td>
-        <td>${h.houseName}</td>
+        <td>${houseName}</td>
         <td>
         <img 
-  src="${h.houseImg}" 
-  alt="${h.houseName}" 
+  src="${houseImg}" 
+  alt="${houseName}" 
   style="width: 150px; height: auto; object-fit: cover; border-radius: 10px;">
         </td>
-        <td>${searchObjectByIdAndKey(h.ownerId, "users").firstName} ${
-          searchObjectByIdAndKey(h.ownerId, "users").lastName
+        <td>${searchObjectByIdAndKey(ownerId, "users").firstName} ${
+          searchObjectByIdAndKey(ownerId, "users").lastName
         }</td>
-        <td>${h.houseCity}</td>
-        <td>${h.housePhone}</td>
+        <td>${houseCity}</td>
+        <td>${housePhone}</td>
         <td class="d-flex">
             <button type="button" class="btn btn-success btn-sm me-2" onclick="goToAddRoomByAdmin(${
-              h.id
+              id
             })" title="Add Room">
             <i class="fa fa-plus text-center text-light"></i>
             </button>
             <button type="button" class="btn btn-primary btn-sm me-2" onclick="editHouseByAdmin(${
-              h.id
+              id
             })" title="Edit House">
             <i class="fa fa-edit text-center text-light"></i>
             </button>
             <button type="button" class="btn btn-danger btn-sm" onclick="deleteHouseByAdmin(${
-              h.id
+              id
             })" title="Delete House">
             <i class="fa fa-trash text-center text-light"></i>
             </button></td>
@@ -2637,100 +2643,157 @@ function editHouseByAdmin(id) {
   let housesArr = getFromLS("houses");
   let foundHouse = housesArr.find((h) => h.id === id);
   let content = "";
+
   if (foundHouse) {
-    content = `<div class="container-xxl bg-white p-0">
+    let {
+      id: houseId,
+      houseName,
+      housePhone,
+      houseCity,
+      houseLocation,
+      houseCapacity,
+      houseDescription,
+      houseImg,
+    } = foundHouse;
 
-      <!-- Edit Guesthouse Start -->
-      <div class="container-xxl py-5">
-        <div class="container">
-          <div class="text-center mb-5">
-            <h6 class="section-title text-primary text-uppercase">Guesthouse Details</h6>
-            <h1 class="mb-3"><span class="text-primary">Edit</span> Guesthouse</h1>
-          </div>
+    content = `
+      <div class="container-xxl bg-white p-0">
 
-          <div class="row justify-content-center">
-            <div class="col-md-6">
-              <div class="row g-3">
-                
-<!-- Name -->
-<div class="col-md-12">
-  <div class="form-floating">
-    <input type="text" class="form-control" id="editHouseNameA" placeholder="Guesthouse Name" value="${foundHouse.houseName}"/>
-    <label for="editHouseNameA">Guesthouse Name</label>
-    <span id="err-editHouseNameA" class="text-danger small"></span>
-  </div>
-</div>
+        <!-- Edit Guesthouse Start -->
+        <div class="container-xxl py-5">
+          <div class="container">
 
-<!-- Phone -->
-<div class="col-md-12">
-  <div class="form-floating">
-    <input type="tel" class="form-control" id="editHousePhoneA" placeholder="Phone" value="${foundHouse.housePhone}"/>
-    <label for="editHousePhoneA">Phone</label>
-    <span id="err-editHousePhoneA" class="text-danger small"></span>
-  </div>
-</div>
+            <div class="text-center mb-5">
+              <h6 class="section-title text-primary text-uppercase">
+                Guesthouse Details
+              </h6>
+              <h1 class="mb-3">
+                <span class="text-primary">Edit</span> Guesthouse
+              </h1>
+            </div>
 
-<!-- City -->
-<div class="col-md-12">
-  <div class="form-floating">
-    <input type="text" class="form-control" id="editHouseCityA" placeholder="City" value="${foundHouse.houseCity}" />
-    <label for="editHouseCityA">City</label>
-    <span id="err-editHouseCityA" class="text-danger small"></span>
-  </div>
-</div>
+            <div class="row justify-content-center">
+              <div class="col-md-6">
+                <div class="row g-3">
 
-<!-- Location -->
-<div class="col-md-12">
-  <div class="form-floating">
-    <input type="text" class="form-control" id="editHouseLocationA" placeholder="Location" value="${foundHouse.houseLocation}"/>
-    <label for="editHouseLocationA">Location</label>
-    <span id="err-editHouseLocationA" class="text-danger small"></span>
-  </div>
-</div>
+                  <!-- Name -->
+                  <div class="col-md-12">
+                    <div class="form-floating">
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="editHouseNameA"
+                        value="${houseName}"
+                      />
+                      <label>Guesthouse Name</label>
+                    </div>
+                  </div>
 
-<!-- Capacity -->
-<div class="col-md-12">
-  <div class="form-floating">
-    <input type="number" class="form-control" id="editHouseCapacityA" placeholder="Capacity" value="${foundHouse.houseCapacity}"/>
-    <label for="editHouseCapacityA">Capacity</label>
-    <span id="err-editHouseCapacityA" class="text-danger small"></span>
-  </div>
-</div>
+                  <!-- Phone -->
+                  <div class="col-md-12">
+                    <div class="form-floating">
+                      <input
+                        type="tel"
+                        class="form-control"
+                        id="editHousePhoneA"
+                        value="${housePhone}"
+                      />
+                      <label>Phone</label>
+                    </div>
+                  </div>
 
-<!-- Description -->
-<div class="col-md-12">
-  <div class="form-floating">
-    <textarea id="editHouseDescriptionA" class="form-control" style="height: 100px">${foundHouse.houseDescription}</textarea>
-    <label for="editHouseDescriptionA">Description</label>
-    <span id="err-editHouseDescriptionA" class="text-danger small"></span>
-  </div>
-</div>
+                  <!-- City -->
+                  <div class="col-md-12">
+                    <div class="form-floating">
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="editHouseCityA"
+                        value="${houseCity}"
+                      />
+                      <label>City</label>
+                    </div>
+                  </div>
 
-<!-- Image -->
-<div class="col-md-12">
-  <div class="form-floating">
-    <input type="file" class="form-control" id="editImgHouseUploadA" accept="image/*" />
-    <label for="editImgHouseUploadA">Change Photo</label>
-    <img src="${foundHouse.houseImg}" alt="preview" id="editPreviewA" style="width:200px; display:block; margin-top:10px" />
-    <span id="err-editImgHouseUploadA" class="text-danger small"></span>
-  </div>
-</div>
+                  <!-- Location -->
+                  <div class="col-md-12">
+                    <div class="form-floating">
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="editHouseLocationA"
+                        value="${houseLocation}"
+                      />
+                      <label>Location</label>
+                    </div>
+                  </div>
 
-<!-- Submit -->
-<div class="col-md-12">
-  <button class="btn btn-primary w-100 py-3" type="button" id="editHouseByOwnerBtnA" onclick="validateEditHouseByAdmin(${foundHouse.id})">
-    Save Changes
-  </button>
-</div>
+                  <!-- Capacity -->
+                  <div class="col-md-12">
+                    <div class="form-floating">
+                      <input
+                        type="number"
+                        class="form-control"
+                        id="editHouseCapacityA"
+                        value="${houseCapacity}"
+                      />
+                      <label>Capacity</label>
+                    </div>
+                  </div>
 
+                  <!-- Description -->
+                  <div class="col-md-12">
+                    <div class="form-floating">
+                      <textarea
+                        id="editHouseDescriptionA"
+                        class="form-control"
+                        style="height: 100px"
+                      >${houseDescription}</textarea>
+                      <label>Description</label>
+                    </div>
+                  </div>
+
+                  <!-- Image -->
+                  <div class="col-md-12">
+                    <div class="form-floating">
+                      <input
+                        type="file"
+                        class="form-control"
+                        id="editImgHouseUploadA"
+                        accept="image/*"
+                      />
+                      <label>Change Photo</label>
+                      <img
+                        src="${houseImg}"
+                        id="editPreviewA"
+                        style="width: 200px; display: block; margin-top: 10px"
+                      />
+                    </div>
+                  </div>
+
+                  <!-- Submit -->
+                  <div class="col-md-12">
+                    <button
+                      class="btn btn-primary w-100 py-3"
+                      type="button"
+                      onclick="validateEditHouseByAdmin(${houseId})"
+                    >
+                      Save Changes
+                    </button>
+                  </div>
+
+                </div>
               </div>
             </div>
+
           </div>
         </div>
+        <!-- Edit Guesthouse End -->
+
       </div>
-      <!-- Edit Guesthouse End -->
-    </div>`;
+    `;
   }
+
   document.getElementById("editHouseByAdmin").innerHTML = content;
 }
 
@@ -3006,27 +3069,28 @@ function displayRoomsByAdmin() {
   let roomsArr = getFromLS("rooms");
   let content = "";
   if (roomsArr.length > 0) {
-    roomsArr.forEach((r) => {
+    roomsArr.forEach((room) => {
+    let {id, roomName, roomImg, roomCapacity, roomPrice, houseId, roomType, numBeds} = room;
       content += `<tr>
-      <td>${r.id}</td>
-      <td>${r.roomName}</td>
-      <td><img src=${r.roomImg} class="img-thumbnail" alt=${
-        r.roomName
-      } style="width: 150px; height: auto; object-fit: cover; border-radius: 10px;"></td>
-      <td>${searchObjectByIdAndKey(r.houseId, "houses").houseName}</td>
-      <td>${r.roomType}</td>
-      <td>${r.numBeds}</td>
-      <td>${r.roomCapacity}</td>
-      <td>${r.roomPrice} DT</td>
+      <td>${roomName}</td>
+      <td>
+      <img class="img-fluid" src="${roomImg}" 
+        alt="${roomName}" style="width: 150px; height: auto; object-fit: cover; border-radius: 10px;"/>
+      </td>
+      <td>${searchObjectByIdAndKey(houseId, "houses").houseName}</td>
+      <td>${roomType}</td>
+      <td>${numBeds}</td>
+      <td>${roomCapacity}</td>
+      <td>${roomPrice} DT</td>
       <td class="d-flex">
   <button
     type="button"
     class="btn btn-primary btn-sm me-2"
-    onclick="editRoomByAdmin(${r.id})">
+    onclick="editRoomByAdmin(${id})">
     <i class="fa fa-edit text-center text-light" title="Edit Room"></i>
   </button>
   <button type="button" class="btn btn-danger btn-sm" onclick="deleteRoomByAdmin(${
-    r.id
+    id
   })">
     <i class="fa fa-trash text-center text-light" title="Delete Room"></i>
   </button>
@@ -3049,9 +3113,9 @@ function editRoomByAdmin(roomId) {
   let foundRoom = roomsArr.find((r) => r.id === roomId);
   let content = "";
   let container = document.getElementById("editRoomByAdmin");
-  if (!foundRoom) {
-    container.innerHTML = "No room found with this Id";
-  } else {
+  if (!foundRoom) return;
+  else {
+  let {id, roomName, roomImg,roomType, roomPrice, roomCapacity, roomDescription, roomServices, numBeds} = foundRoom;
     content = `
     <div class="container">
   <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
@@ -3073,7 +3137,7 @@ function editRoomByAdmin(roomId) {
             <div class="col-md-12">
               <div class="form-floating">
                 <input type="text" class="form-control" id="editAdminRoomName" value="${
-                  foundRoom.roomName
+                  roomName
                 }"/>
                 <label for="editAdminRoomName">Room Name</label>
                 <span id="err-editAdminRoomName" class="text-danger small"></span>
@@ -3084,7 +3148,7 @@ function editRoomByAdmin(roomId) {
             <div class="col-md-6">
               <div class="form-floating">
                 <input type="number" class="form-control" id="editAdminRoomPrice" value="${
-                  foundRoom.roomPrice
+                  roomPrice
                 }"/>
                 <label for="editAdminRoomPrice">Price</label>
                 <span id="err-editAdminRoomPrice" class="text-danger small"></span>
@@ -3095,16 +3159,16 @@ function editRoomByAdmin(roomId) {
             <div class="col-md-6 form-floating mb-3">
               <select class="form-select" id="editAdminRoomType">
                 <option value="Single" ${
-                  foundRoom.roomType == "Single" ? "selected" : ""
+                  roomType == "Single" ? "selected" : ""
                 }>Single</option>
                 <option value="Double" ${
-                  foundRoom.roomType == "Double" ? "selected" : ""
+                roomType == "Double" ? "selected" : ""
                 }>Double</option>
                 <option value="Suit" ${
-                  foundRoom.roomType == "Suit" ? "selected" : ""
+                  roomType == "Suit" ? "selected" : ""
                 }>Suit</option>
                 <option value="Family" ${
-                  foundRoom.roomType == "Family" ? "selected" : ""
+                  roomType == "Family" ? "selected" : ""
                 }>Family</option>
               </select>
               <label for="editAdminRoomType">Room Type</label>
@@ -3115,7 +3179,7 @@ function editRoomByAdmin(roomId) {
             <div class="col-md-6">
               <div class="form-floating">
                 <input type="number" class="form-control" id="editAdminRoomCapacity" value="${
-                  foundRoom.roomCapacity
+                  roomCapacity
                 }"/>
                 <label for="editAdminRoomCapacity">Capacity</label>
                 <span id="err-editAdminRoomCapacity" class="text-danger small"></span>
@@ -3126,7 +3190,7 @@ function editRoomByAdmin(roomId) {
             <div class="col-md-6">
               <div class="form-floating">
                 <input type="number" class="form-control" id="editAdminNumBeds" value="${
-                  foundRoom.numBeds
+                  numBeds
                 }"/>
                 <label for="editAdminNumBeds">Number Of Beds</label>
                 <span id="err-editAdminNumBeds" class="text-danger small"></span>
@@ -3137,7 +3201,7 @@ function editRoomByAdmin(roomId) {
             <div class="col-md-12">
               <div class="form-floating">
                 <textarea class="form-control" id="editAdminRoomDescription" style="height:100px">${
-                  foundRoom.roomDescription
+                  roomDescription
                 }</textarea>
                 <label for="editAdminRoomDescription">Description</label>
                 <span id="err-editAdminRoomDescription" class="text-danger small"></span>
@@ -3152,18 +3216,18 @@ function editRoomByAdmin(roomId) {
                   <div class="form-check">
                     <input class="form-check-input" type="checkbox" value="Wifi" id="editAdminRoomWifi" 
                     ${
-                      foundRoom.roomServices.includes("Wifi") ? "checked" : ""
+                      roomServices.includes("Wifi") ? "checked" : ""
                     }/>
                     <label class="form-check-label" for="editAdminRoomWifi">Wi-Fi</label>
                   </div>
                   <div class="form-check">
                     <input class="form-check-input" type="checkbox" value="AC" id="editAdminRoomAC" 
-                    ${foundRoom.roomServices.includes("AC") ? "checked" : ""}/>
+                    ${roomServices.includes("AC") ? "checked" : ""}/>
                     <label class="form-check-label" for="editAdminRoomAC">AC</label>
                   </div>
                   <div class="form-check">
                     <input class="form-check-input" type="checkbox" value="TV" id="editAdminRoomTV" 
-                    ${foundRoom.roomServices.includes("TV") ? "checked" : ""}/>
+                    ${roomServices.includes("TV") ? "checked" : ""}/>
                     <label class="form-check-label" for="editAdminRoomTV">TV</label>
                   </div>
                 </div>
@@ -3174,7 +3238,7 @@ function editRoomByAdmin(roomId) {
                   <div class="form-check">
                     <input class="form-check-input" type="checkbox" value="Room Services" id="editAdminRoomService" 
                     ${
-                      foundRoom.roomServices.includes("Room Services")
+                      roomServices.includes("Room Services")
                         ? "checked"
                         : ""
                     }/>
@@ -3183,7 +3247,7 @@ function editRoomByAdmin(roomId) {
                   <div class="form-check">
                     <input class="form-check-input" type="checkbox" value="Kitchenette" id="editAdminRoomKitchenette"
                     ${
-                      foundRoom.roomServices.includes("Kitchenette")
+                      roomServices.includes("Kitchenette")
                         ? "checked"
                         : ""
                     }/>
@@ -3192,7 +3256,7 @@ function editRoomByAdmin(roomId) {
                   <div class="form-check">
                     <input class="form-check-input" type="checkbox" value="Bathhub" id="editAdminRoomBath" 
                     ${
-                      foundRoom.roomServices.includes("Bathhub")
+                      roomServices.includes("Bathhub")
                         ? "checked"
                         : ""
                     }/>
@@ -3211,7 +3275,7 @@ function editRoomByAdmin(roomId) {
                 <span id="err-editAdminImgRoomUpload" class="text-danger small"></span>
 
                 <img src="${
-                  foundRoom.roomImg
+                  roomImg
                 }" id="editAdminPreviewRoom" style="width:200px; display:block; margin-top:10px" />
               </div>
             </div>
@@ -3219,7 +3283,7 @@ function editRoomByAdmin(roomId) {
             <!-- Submit -->
             <div class="col-md-12">
               <button type="button" class="btn btn-primary w-100 py-3" id="editRoomByAdmin-btn"
-                onclick="validateEditRoomByAdmin(${foundRoom.id})">
+                onclick="validateEditRoomByAdmin(${id})">
                 Save Changes
               </button>
               <span id="err-editRoomByAdmin-btn" class="text-danger small"></span>
@@ -3233,17 +3297,6 @@ function editRoomByAdmin(roomId) {
     `;
     container.innerHTML = content;
   }
-}
-
-function showSuccessToast(toastId) {
-  const toast = document.getElementById(toastId);
-  if (!toast) return;
-
-  toast.classList.add("show");
-
-  setTimeout(() => {
-    toast.classList.remove("show");
-  }, 2000);
 }
 
 function validateEditRoomByAdmin(roomId) {
@@ -3395,30 +3448,33 @@ function displayReservationsByAdmin() {
     return;
   }
   reservationsArr.forEach((res) => {
-    let foundRoom = searchObjectByIdAndKey(res.roomId, "rooms");
-    let foundHouse = searchObjectByIdAndKey(foundRoom.houseId, "houses");
-    let foundUser = searchObjectByIdAndKey(res.clientId, "users");
+    let {id, roomId, clientId, numGuests, checkinBooking, checkoutBooking, totalPrice, totalSum} = res;
+    let foundRoom = searchObjectByIdAndKey(roomId, "rooms");
+    let {houseId, roomName, roomPrice} = foundRoom;
+    let foundHouse = searchObjectByIdAndKey(houseId, "houses");
+    let foundUser = searchObjectByIdAndKey(clientId, "users");
+    let {firstName, lastName} = foundUser;
     content += `
       <tr>
        <td>${foundHouse.houseName}</td>
-       <td>${foundRoom.roomName}</td>
-       <td>${foundRoom.roomPrice} DT</td>
-       <td>${foundUser.firstName} ${foundUser.lastName}</td>
-       <td>${res.numGuests}</td>
+       <td>${roomName}</td>
+       <td>${roomPrice} DT</td>
+       <td>${firstName} ${lastName}</td>
+       <td>${numGuests}</td>
        <td>${
-         res.checkinBooking
-           ? new Date(res.checkinBooking).toLocaleDateString("FR")
+         checkinBooking
+           ? new Date(checkinBooking).toLocaleDateString("FR")
            : "Not Validate Date"
        }</td>
        <td>${
-         res.checkoutBooking
-           ? new Date(res.checkoutBooking).toLocaleDateString("FR")
+         checkoutBooking
+           ? new Date(checkoutBooking).toLocaleDateString("FR")
            : "Not Validate Date"
        }</td>
-       <td>${res.totalPrice} DT</td>
+       <td>${totalPrice} DT</td>
        <td>
          <button type="button" class="btn btn-danger btn-sm" onclick="deleteReservationByAdmin(${
-           res.id
+           id
          })">
                 <i class="fa fa-trash text-center text-light" title="Delete Reservation"></i>
             </button>
@@ -3435,6 +3491,7 @@ function displayReservationsByAdmin() {
   </button>`;
   container.innerHTML = content + html;
 }
+
 
 function deleteReservationByAdmin(resId) {
   let reservationsArr = getFromLS("reservations");
