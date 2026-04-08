@@ -2927,10 +2927,7 @@ function updateRelatedRoomsAndReservationsByAdmin(houseId) {
 
 function addHouseByAdmin() {
   const connectedUserId = localStorage.getItem("connectedUserId");
-  if (!connectedUserId) {
-    alert("Action interdite !");
-    return;
-  }
+  if (!connectedUserId) return;
   let housesArr = getFromLS("houses");
   // Inputs
   let adminHouseName = getInpValue("adminHouseName");
@@ -3502,56 +3499,63 @@ function deleteReservationByAdmin(resId) {
   displayReservationsByAdmin();
 }
 
-// Events
+// Global Var
+let currentType = "name";
 
-function init() {
-  setupEvenets();
-}
+function initSearch() {
+  const searchInput = document.getElementById("search");
+  const searchNameBtn = document.getElementById("searchName");
+  const searchCityBtn = document.getElementById("searchCity");
 
-function setupEvenets() {
-  document.getElementById("search").onkeyup = function () {
-    search("name");
+  searchInput.onkeyup = function () {
+    search(currentType);
   };
-  document.getElementById("searchName").onclick = function () {
-    search("name");
+
+  searchNameBtn.onclick = function () {
+    currentType = "name";
+    search(currentType);
   };
-  document.getElementById("searchCity").onclick = function () {
-    search("city");
+
+  searchCityBtn.onclick = function () {
+    currentType = "city";
+    search(currentType);
   };
+  search(currentType);
 }
 
 function search(type) {
-  let housesArr = getFromLS("houses");
-  let text = document.getElementById("search").value.toLowerCase().trim();
-  let result = [];
+  const text = document.getElementById("search").value.toLowerCase().trim();
+  const houses = getFromLS("houses");
 
+  let filtered = [];
   if (type === "name") {
-    result = housesArr.filter((h) => h.houseName.toLowerCase().includes(text));
+    filtered = houses.filter(h => h.houseName.toLowerCase().includes(text));
   } else if (type === "city") {
-    result = housesArr.filter((h) => h.houseCity.toLowerCase().includes(text));
+    filtered = houses.filter(h => h.houseCity.toLowerCase().includes(text));
   }
-  displayResult(result);
+
+  displayResult(filtered);
 }
 
 function displayResult(arr) {
-  let div = document.getElementById("result");
-  div.innerHTML = "";
+  const div = document.getElementById("result");
   if (arr.length === 0) {
     div.innerHTML = "<p class='text-muted text-center'>No guesthouse found</p>";
     return;
-  } else {
-    arr.forEach((h) => {
-      div.innerHTML += `
+  }
+
+  let html = "";
+  arr.forEach(h => {
+    html += `
       <div class="card p-3 mb-3">
         <h4>${h.houseName}</h4>
         <p><i class="fa fa-map-marker-alt"></i> ${h.houseCity}</p>
       </div>
-      `;
-    });
-  }
-}
+    `;
+  });
 
-init();
+  div.innerHTML = html;
+}
 
 function countHouses() {
   const housesArr = getFromLS("houses");
