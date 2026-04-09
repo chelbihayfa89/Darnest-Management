@@ -3572,3 +3572,67 @@ function countClients() {
   const count = usersArr.filter((u) => u.role === "client").length;
   document.getElementById("contentClients").innerHTML = count;
 }
+
+function displayThree() {
+  let housesArr = getFromLS("houses");
+  let content = "";
+  let firstThree = housesArr.slice(0, 3);
+  firstThree.forEach((house) => {
+    const {
+      id,
+      houseName,
+      houseImg,
+      houseCapacity,
+      houseCity,
+      housePhone,
+      houseLocation,
+      houseDescription,
+    } = house;
+    content += `
+    <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+              <div class="room-item shadow rounded overflow-hidden">
+                <div class="position-relative">
+                  <img class="img-fluid" src="${houseImg}" alt="${houseName}" 
+                  style="max-height: 300px; object-fit: cover; width: 100%;"/>
+                  <small
+                    class="position-absolute start-0 top-100 translate-middle-y bg-primary text-white rounded py-1 px-3 ms-4"
+                    >Starting From ${cheapestRoom(id)} TND</small
+                  >
+                </div>
+                <div class="p-4 mt-2">
+                  <div class="mb-3">
+                    <h5 class="mb-0">${houseName}</h5>
+                  </div>
+                  <div class="mb-3">
+                    <small class="border-end me-3 pe-3"
+                      ><i class="fa fa-home text-primary me-2"></i>Rooms</small
+                    >
+                    <small class="border-end me-3 pe-3"
+                      ><i class="fa fa-users text-primary me-2"></i>${houseCapacity} Guests</small
+                    >
+                  </div>
+                   <div class="mb-3">
+                    <small class="border-end me-3 pe-3"
+                      ><i class="fa fa-map-marker text-primary me-2"></i>${houseCity}</small
+                    >
+                    <small class="border-end me-3 pe-3"
+                      ><i class="fa fa-phone text-primary me-2"></i>${housePhone}</small
+                    >
+                  </div>
+                   <div class="mb-3">
+                      <i class="fa fa-road text-primary me-2"></i>${houseLocation}
+                  </div>
+                  <p class="text-body mb-3">
+                  ${houseDescription}
+                  </p>
+                  <div class="d-flex justify-content-center">
+                    <a class="btn btn-sm btn-primary rounded py-2 px-4" href="#" onclick= "goToDisplayRooms(${id})"
+                      >View Rooms</a
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>`;
+  });
+  document.getElementById("cnt").innerHTML = content;
+}
